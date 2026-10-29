@@ -1,5 +1,5 @@
-# GazeGuard AI
-### Quality-Aware Personalized Temporal Calibration for Concealed-Recognition Analysis
+# Quality-Aware-Personalized-Temporal-Calibration-for-Concealed-Recognition-Analysis
+### GazeGuard AI: Research Platform & Interactive Scientific Benchmark
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-1.0.0-009688.svg)](https://fastapi.tiangolo.com/)
