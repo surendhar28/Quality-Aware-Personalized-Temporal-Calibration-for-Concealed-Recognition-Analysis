@@ -86,7 +86,13 @@ def create_docx():
     p_auth = doc.add_paragraph()
     p_auth.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p_auth.paragraph_format.space_after = Pt(16)
-    r_auth = p_auth.add_run("GazeGuard AI Research Consortium\nAdvanced Agentic AI Laboratory & Psychophysiological Computing Group\nBenchmark DOI: 10.5281/zenodo.18525952 | Target Venue: Springer Nature | October 2026")
+    r_auth = p_auth.add_run(
+        "Surendhar K. [Author 1]* (Lead Researcher & Systems Architect), Karthianna N. [Author 2] (Senior Investigator), and GazeGuard AI Research Consortium\n"
+        "1 Department of Artificial Intelligence & Data Science, Faculty of Engineering\n"
+        "2 Psychophysiological Computing & Cognitive Engineering Laboratory\n"
+        "*Corresponding Author: Surendhar K. (surendhar28@users.noreply.github.com / surendharkarthianna@gmail.com)\n"
+        "Physical Benchmark DOI: 10.5281/zenodo.18525952 | Target Venue: Springer Nature | October 2026"
+    )
     r_auth.font.size = Pt(9.5)
     r_auth.font.color.rgb = RGBColor(0x33, 0x41, 0x55)
 
@@ -595,8 +601,11 @@ def create_docx():
 
     add_heading_2("E. Feature Attribution & Fixation Dynamics")
     doc.add_paragraph(
-        "TreeSHAP waterfall attribution (Figure 4) shows top positive contributions from early mean fixation duration (+0.38) and first "
-        "fixation duration (+0.24). Grand average fixation dynamics (Figure 5) illustrate elevated dwell duration for probe stimuli across the trial."
+        "TreeSHAP feature attributions (Figure 4) demonstrate that overall trial-wide fixation statistics—specifically mean fixation duration "
+        "(E[|phi_i|] = 0.0807) and total fixation frequency count (E[|phi_i|] = 0.0615)—exert the largest global importance in driving classifier outputs. "
+        "Late search dwell difference (1000–2000 ms, E[|phi_i|] = 0.0246) and early orienting dwell difference (0–500 ms, E[|phi_i|] = 0.0168) provide "
+        "significant secondary contributions. Figure 5 presents the empirical grand average fixation dwell time-series across the physical recordings, "
+        "confirming elevated foveal dwell for familiar probe items."
     )
 
     fig4_path = os.path.join(FIG_DIR, "fig4_shap_attribution.png")
@@ -606,7 +615,7 @@ def create_docx():
         p_cap4 = doc.add_paragraph()
         p_cap4.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_cap4.paragraph_format.space_after = Pt(10)
-        r_cap4 = p_cap4.add_run("Figure 4: TreeSHAP feature attribution waterfall illustrating statistical model weights in familiarity classification.")
+        r_cap4 = p_cap4.add_run("Figure 4: Explainable TreeSHAP feature attributions evaluated on the Zenodo CIT benchmark (N=38 participants, 819 physical trials). (A) Global feature importance magnitude (E[|phi_i|]) across out-of-fold trials on a strictly non-negative axis ([0.0, 0.10]), showing dominant contribution from mean fixation duration (0.0807) and fixation count (0.0615); and (B) Directional log-odds impact (E[phi_i]) on a zero-centered axis showing signed contributions pushing toward probe familiarity (>0) versus baseline control (<0).")
         r_cap4.font.size = Pt(9)
         r_cap4.font.italic = True
 
@@ -617,7 +626,7 @@ def create_docx():
         p_cap5 = doc.add_paragraph()
         p_cap5.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_cap5.paragraph_format.space_after = Pt(10)
-        r_cap5 = p_cap5.add_run("Figure 5: Grand average fixation duration dynamics across the trial showing sustained dwell elevation for probe stimuli.")
+        r_cap5 = p_cap5.add_run("Figure 5: Empirical grand average fixation dwell dynamics post-stimulus onset (0–2000 ms) across 38 biological participants and 819 physical trials (Tobii Pro Fusion, 120 Hz, Zenodo DOI: 10.5281/zenodo.18525952; Celniak et al., 2026), binned into 50 ms intervals with +/- 1 SEM error bands.")
         r_cap5.font.size = Pt(9)
         r_cap5.font.italic = True
 
@@ -664,10 +673,10 @@ def create_docx():
     add_heading_1("Declarations (Springer Nature Standard)")
     dec_items = [
         ("Data Availability Statement:", "The benchmark dataset is available under CC-BY-4.0 on Zenodo at DOI: 10.5281/zenodo.18525952 (Celniak et al., 2026)."),
-        ("Code Availability Statement:", "The platform code is open-source under MIT License at https://github.com/gazeguard-ai/gazeguard-platform with deterministic Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, seed=42."),
+        ("Code Availability Statement:", "The platform code is open-source under MIT License at https://github.com/surendhar28/Quality-Aware-Personalized-Temporal-Calibration-for-Concealed-Recognition-Analysis.git with deterministic Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, seed=42."),
         ("Ethics Approval & Consent:", "Approved by the Forensic Laboratory of the Police Headquarters in Katowice and AGH University of Krakow with written informed consent under the Declaration of Helsinki."),
         ("Consent for Publication:", "Not applicable (fully anonymized)."),
-        ("Author Contributions (CRediT):", "Conceptualization: Consortium; Methodology: S.K., D.S.; Software: S.K., A.M.; Validation: S.K., P.A.; Formal Analysis: S.K.; Investigation: W.C.; Writing: S.K.; Supervision: P.A."),
+        ("Author Contributions (CRediT):", "Conceptualization: S.K., K.N.; Methodology: S.K., K.N.; Software: S.K.; Validation: S.K., K.N.; Formal Analysis: S.K.; Investigation: S.K., K.N.; Data Curation: S.K. (Zenodo benchmark ingestion & curation); Writing - Original Draft: S.K.; Writing - Review & Editing: S.K., K.N.; Visualization: S.K.; Supervision: K.N."),
         ("Competing Interests:", "The authors declare no competing financial or personal interests.")
     ]
     for d_title, d_text in dec_items:
@@ -904,8 +913,10 @@ def create_html_and_pdf():
   <p class="subtitle">A Psychophysiological Computing Framework for Eye-Tracking Concealed Information Testing</p>
   
   <div class="authors">
-    <strong>GazeGuard AI Research Consortium</strong><br>
-    Advanced Agentic AI Laboratory &amp; Psychophysiological Computing Group<br>
+    <strong>Surendhar K. [Author 1]<sup>1,*</sup>, Karthianna N. [Author 2]<sup>2</sup>, and GazeGuard AI Research Consortium</strong><br>
+    <sup>1</sup> Department of Artificial Intelligence &amp; Data Science, Faculty of Engineering<br>
+    <sup>2</sup> Psychophysiological Computing &amp; Cognitive Engineering Laboratory<br>
+    <small>*Corresponding Author: Surendhar K. (Email: surendhar28@users.noreply.github.com / surendharkarthianna@gmail.com)</small><br>
     <em>Physical Benchmark Dataset DOI: <a href="https://doi.org/10.5281/zenodo.18525952" target="_blank">10.5281/zenodo.18525952</a> | Target: Springer Nature | October 2026</em>
   </div>
 
@@ -1346,13 +1357,13 @@ def create_html_and_pdf():
 
   <h3>E. Feature Attribution &amp; Fixation Dynamics</h3>
   <figure>
-    <img src="IMAGE_PLACEHOLDER_4" alt="TreeSHAP Feature Attribution Waterfall">
-    <figcaption>Figure 4: TreeSHAP feature attribution waterfall illustrating statistical model weights in familiarity classification.</figcaption>
+    <img src="IMAGE_PLACEHOLDER_4" alt="TreeSHAP Feature Attribution">
+    <figcaption>Figure 4: Explainable TreeSHAP feature attributions evaluated on the Zenodo CIT benchmark (N=38 participants, 819 physical trials). (A) Global feature importance magnitude (E[|phi_i|]) across out-of-fold trials on a strictly non-negative axis ([0.0, 0.10]), showing dominant contribution from mean fixation duration (0.0807) and fixation count (0.0615); and (B) Directional log-odds impact (E[phi_i]) on a zero-centered axis showing signed contributions pushing toward probe familiarity (>0) versus baseline control (<0).</figcaption>
   </figure>
 
   <figure>
     <img src="IMAGE_PLACEHOLDER_5" alt="Grand Average Fixation Duration Profile">
-    <figcaption>Figure 5: Grand average fixation duration dynamics across the trial showing sustained dwell elevation for probe stimuli.</figcaption>
+    <figcaption>Figure 5: Empirical grand average fixation dwell dynamics post-stimulus onset (0–2000 ms) across 38 biological participants and 819 physical trials (Tobii Pro Fusion, 120 Hz, Zenodo DOI: 10.5281/zenodo.18525952; Celniak et al., 2026), binned into 50 ms intervals with +/- 1 SEM error bands.</figcaption>
   </figure>
 
   <h2>VII. Discussion</h2>
@@ -1387,10 +1398,10 @@ def create_html_and_pdf():
   <div class="declarations-box">
     <h3>Declarations (Springer Nature Standard)</h3>
     <p><strong>Data Availability Statement:</strong> The benchmark eye-tracking dataset evaluated in this study is publicly available under the Creative Commons Attribution 4.0 International license on Zenodo at DOI: <a href="https://doi.org/10.5281/zenodo.18525952" target="_blank">10.5281/zenodo.18525952</a> (Celniak et al., 2026). Derived feature matrices and preprocessed datasets are distributed within the GazeGuard AI repository.</p>
-    <p><strong>Code Availability Statement:</strong> The full software platform, algorithmic implementations, and evaluation scripts are open-source under the MIT License at <a href="https://github.com/gazeguard-ai/gazeguard-platform" target="_blank">https://github.com/gazeguard-ai/gazeguard-platform</a>. The pipeline operates deterministically with Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, NumPy 1.26.4, and Pandas 2.2.2 with fixed random seed=42.</p>
+    <p><strong>Code Availability Statement:</strong> The full software platform, algorithmic implementations, and evaluation scripts are open-source under the MIT License at <a href="https://github.com/surendhar28/Quality-Aware-Personalized-Temporal-Calibration-for-Concealed-Recognition-Analysis.git" target="_blank">https://github.com/surendhar28/Quality-Aware-Personalized-Temporal-Calibration-for-Concealed-Recognition-Analysis.git</a>. The pipeline operates deterministically with Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, NumPy 1.26.4, and Pandas 2.2.2 with fixed random seed=42.</p>
     <p><strong>Ethics Approval &amp; Consent to Participate:</strong> The secondary experimental dataset evaluated in this research was collected under institutional ethical oversight by the Forensic Laboratory of the Police Headquarters in Katowice and the AGH University of Krakow (Celniak et al., 2026). All human participants provided informed written consent prior to testing in accordance with the Declaration of Helsinki.</p>
     <p><strong>Consent for Publication:</strong> Not applicable; all data evaluated in this work are fully anonymized and pseudonymized.</p>
-    <p><strong>Author Contributions (CRediT):</strong> Conceptualization: GazeGuard Consortium; Methodology: S.K., D.S.; Software: S.K., A.M.; Validation: S.K., P.A.; Formal Analysis: S.K., D.S.; Investigation: W.C., D.S.; Data Curation: W.C., B.J.; Writing - Original Draft: S.K.; Writing - Review &amp; Editing: S.K., P.A., B.J.; Visualization: S.K.; Supervision: P.A.</p>
+    <p><strong>Author Contributions (CRediT):</strong> Conceptualization: S.K., K.N.; Methodology: S.K., K.N.; Software: S.K.; Validation: S.K., K.N.; Formal Analysis: S.K.; Investigation: S.K., K.N.; Data Curation: S.K. (Zenodo benchmark ingestion &amp; curation); Writing - Original Draft: S.K.; Writing - Review &amp; Editing: S.K., K.N.; Visualization: S.K.; Supervision: K.N.</p>
     <p><strong>Competing Interests:</strong> The authors declare no competing financial or personal interests that could have influenced the work reported in this paper.</p>
   </div>
 

@@ -1,9 +1,12 @@
 # Quality-Aware Personalized Temporal Calibration for Concealed-Recognition Analysis
 
-**Authors:** GazeGuard AI Research Consortium  
-**Affiliation:** Advanced Agentic AI Laboratory & Psychophysiological Computing Group  
+**Authors:** Surendhar K. [Author 1]* (Lead Researcher & Systems Architect), Karthianna N. [Author 2] (Senior Investigator), and GazeGuard AI Research Consortium  
+**Affiliations:**  
+1 Department of Artificial Intelligence & Data Science, Faculty of Engineering  
+2 Psychophysiological Computing & Cognitive Engineering Laboratory  
+*Corresponding Author: Surendhar K. (Email: surendhar28@users.noreply.github.com / surendharkarthianna@gmail.com)  
 **Target Venue:** Springer Nature (*Behavior Research Methods* / *Scientific Data* / *Nature Human Behaviour*)  
-**Dataset DOI:** [10.5281/zenodo.18525952](https://doi.org/10.5281/zenodo.18525952)  
+**Physical Benchmark Dataset DOI:** [10.5281/zenodo.18525952](https://doi.org/10.5281/zenodo.18525952)  
 **Date:** October 2026  
 
 ---
@@ -165,11 +168,11 @@ Mode A (Population Scaling) yielded Balanced Accuracy = 62.8% and ROC-AUC = 0.68
 *Figure 3: Quality-aware abstention trade-off curve demonstrating peak diagnostic accuracy (63.8%) at $\theta = 0.40$ with 91.2% trial coverage.*
 
 ### E. Feature Attribution & Fixation Dynamics
-![Figure 4: SHAP Attribution Breakdown](figures/fig4_shap_attribution.png)
-*Figure 4: TreeSHAP feature attribution waterfall illustrating statistical model weights in familiarity classification.*
+![Figure 4: Explainable TreeSHAP Feature Attribution](figures/fig4_shap_attribution.png)
+*Figure 4: Explainable TreeSHAP feature attributions evaluated on the Zenodo CIT benchmark ($N=38$ participants, 819 physical trials). (A) Global feature importance magnitude ($\mathbb{E}[|\phi_i|]$) across out-of-fold trials on a strictly non-negative axis ($[0.0, 0.10]$), showing dominant contribution from mean fixation duration ($0.0807$) and fixation count ($0.0615$); and (B) Directional log-odds impact ($\mathbb{E}[\phi_i]$) on a zero-centered axis showing signed contributions pushing toward probe familiarity ($>0$) versus baseline control ($<0$).*
 
-![Figure 5: Fixation Duration Dynamics](figures/fig5_fixation_dynamics.png)
-*Figure 5: Grand average fixation duration dynamics across the trial showing sustained dwell elevation for probe stimuli.*
+![Figure 5: Empirical Grand Average Fixation Dynamics](figures/fig5_fixation_dynamics.png)
+*Figure 5: Empirical grand average fixation dwell dynamics post-stimulus onset ($0–2000\text{ ms}$) across 38 biological participants and 819 physical trials (Tobii Pro Fusion, 120 Hz, Zenodo DOI: 10.5281/zenodo.18525952; Celniak et al., 2026), binned into 50 ms intervals with $\pm 1$ SEM error bands.*
 
 ---
 
@@ -194,10 +197,10 @@ We presented GazeGuard AI, demonstrating that Quality-Aware Personalized Tempora
 
 ## Declarations (Springer Nature Standard)
 - **Data Availability Statement:** The benchmark eye-tracking dataset evaluated in this study is publicly available under the Creative Commons Attribution 4.0 International license on Zenodo at DOI: [10.5281/zenodo.18525952](https://doi.org/10.5281/zenodo.18525952) (Celniak et al., 2026). Derived feature matrices and preprocessed datasets are distributed within the GazeGuard AI repository.
-- **Code Availability Statement:** The full software platform, algorithmic implementations, and evaluation scripts are open-source under the MIT License at https://github.com/gazeguard-ai/gazeguard-platform. The pipeline operates deterministically with Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, NumPy 1.26.4, and Pandas 2.2.2 with fixed random seed=42.
+- **Code Availability Statement:** The full software platform, algorithmic implementations, and evaluation scripts are open-source under the MIT License at https://github.com/surendhar28/Quality-Aware-Personalized-Temporal-Calibration-for-Concealed-Recognition-Analysis.git. The pipeline operates deterministically with Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, NumPy 1.26.4, and Pandas 2.2.2 with fixed random seed=42.
 - **Ethics Approval & Consent to Participate:** The secondary experimental dataset evaluated in this research was collected under institutional ethical oversight by the Forensic Laboratory of the Police Headquarters in Katowice and the AGH University of Krakow (Celniak et al., 2026). All human participants provided informed written consent prior to testing in accordance with the Declaration of Helsinki.
 - **Consent for Publication:** Not applicable; all data evaluated in this work are fully anonymized and pseudonymized.
-- **Author Contributions (CRediT):** Conceptualization: GazeGuard Consortium; Methodology: S.K., D.S.; Software: S.K., A.M.; Validation: S.K., P.A.; Formal Analysis: S.K., D.S.; Investigation: W.C., D.S.; Data Curation: W.C., B.J.; Writing - Original Draft: S.K.; Writing - Review & Editing: S.K., P.A., B.J.; Visualization: S.K.; Supervision: P.A.
+- **Author Contributions (CRediT):** Conceptualization: S.K., K.N.; Methodology: S.K., K.N.; Software: S.K.; Validation: S.K., K.N.; Formal Analysis: S.K.; Investigation: S.K., K.N.; Data Curation: S.K. (Zenodo benchmark ingestion & curation); Writing - Original Draft: S.K.; Writing - Review & Editing: S.K., K.N.; Visualization: S.K.; Supervision: K.N.
 - **Competing Interests:** The authors declare no competing financial or personal interests that could have influenced the work reported in this paper.
 
 ---
