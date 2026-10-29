@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Data and Models
+data/raw/*
+!data/raw/README.md
+data/processed/*
+!data/processed/README.md
+*.xlsx
+*.csv.gz
+*.h5
+*.joblib
+*.pkl
+backend/app/database/*.db
+backend/app/database/*.sqlite
+
+# Environment and Secrets
+.env
+.env.local
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE / System
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,379 @@
+=== ZENODO PDF STRUCTURE ===
+--- Page 1 ---
+Eye-Tracking Dataset Description Document 
+ 
+Introduction 
+This document provides a detailed description of the eye-tracking dataset collected during 
+our study. The dataset contains comprehensive recordings of participants’ eye movements 
+while interacting with various stimuli, along with associated metadata, calibration and 
+validation metrics, and Areas of Interest (AOIs) information. The dataset is structured to 
+allow detailed analysis of gaze behavior, fixation patterns, and interaction with visual 
+elements. This document is intended to help researchers and analysts understand the 
+structure, content, and purpose of each column in the dataset to facilitate reproducibility, 
+analysis, and interpretation. 
+1. Recording Metadata 
+Column 
+Description 
+Recording timestamp 
+Time when the recording was created 
+(system/recorded) 
+Computer timestamp 
+Local computer timestamp for synchronization 
+Sensor 
+Identifier of the eye tracker or sensor used 
+Project name 
+Name of the project/study 
+Export date 
+Date the file was exported 
+Participant name, gender, 
+FirstExamination, group 
+Participant-specific metadata 
+Recording name, Recording date, 
+Recording date UTC, Recording 
+start time, Recording start time 
+UTC, Recording duration 
+Information about the specific recording session 
+Timeline name, Recording Fixation 
+filter name, Recording software 
+version 
+Recording settings and software info 
+Recording resolution height, 
+Recording resolution width 
+Screen resolution during recording 
+Recording monitor latency 
+Latency of the display in ms 
+2. Calibration and Validation Metrics 
+Column Group 
+Description 
+Calibration metrics 
+Average calibration accuracy 
+(mm/degrees/pixels), Average 
+calibration precision SD/RMS 
+
+--- Page 2 ---
+Column Group 
+Description 
+Validation metrics 
+Average validation accuracy 
+(mm/degrees/pixels), Average validation 
+precision SD/RMS 
+3. Eye Tracker Data 
+Column Group 
+Description 
+Eyetracker timestamp 
+Timestamp from eye tracker 
+Event, Event value 
+Markers for events (e.g., trial start, 
+stimulus change) 
+Gaze point X/Y, Gaze point left/right X/Y 
+Gaze coordinates on the screen 
+Gaze direction left/right X/Y/Z 
+3D gaze vector for each eye 
+Pupil diameter left/right, Pupil diameter filtered 
+Pupil sizes, sometimes filtered for noise 
+Validity left/right 
+Eye tracker validity codes 
+Eye position left/right X/Y/Z (DACSmm) 
+Eye position in 3D space (millimeters) 
+Gaze point left/right X/Y (DACSmm) 
+Gaze in display coordinates in 
+millimeters 
+Gaze point left/right X/Y (MCSnorm) 
+Gaze normalized to monitor/camera 
+space (0–1) 
+4. Stimulus Information 
+Column Group 
+Description 
+Presented Stimulus name, Presented Media 
+name 
+Stimulus identifiers 
+Presented Media width/height, Presented 
+Media position X/Y (DACSpx) 
+Screen position and size of stimuli 
+Original Media width/height 
+Original dimensions of the stimulus 
+5. Eye Movement Events 
+Column Group 
+Description 
+Eye movement type, Gaze event duration, Eye 
+movement type index 
+Event classification: fixation, saccade, 
+etc. 
+Fixation point X/Y, Fixation point X/Y (MCSnorm) Coordinates of fixation events 
+Targets, Ungrouped 
+Metadata about what the gaze was 
+directed at 
+6. Areas of Interest (AOI) 
+• Format: AOI hit [row_column - object] 
+• Example: AOI hit [3_1 - asystent] → gaze hit AOI for “asystent” at position 3_1 
+
+--- Page 3 ---
+• Typically binary indicators (hit = 1 / not hit = 0) 
+ 
+ 
+
+
+
+=== EXCEL STRUCTURE (CIT Recording1.xlsx) ===
+
+Sheet: Data
+Columns count: 176
+Columns:
+  - Recording timestamp
+  - Computer timestamp
+  - Sensor
+  - Project name
+  - Export date
+  - Participant name
+  - gender
+  - FirstExamination
+  - group
+  - Recording name
+  - Recording date
+  - Recording date UTC
+  - Recording start time
+  - Recording start time UTC
+  - Recording duration
+  - Timeline name
+  - Recording Fixation filter name
+  - Recording software version
+  - Recording resolution height
+  - Recording resolution width
+  - Recording monitor latency
+  - Average calibration accuracy (mm)
+  - Average calibration precision SD (mm)
+  - Average calibration precision RMS (mm)
+  - Average calibration accuracy (degrees)
+  - Average calibration precision SD (degrees)
+  - Average calibration precision RMS (degrees)
+  - Average calibration accuracy (pixels)
+  - Average calibration precision SD (pixels)
+  - Average calibration precision RMS (pixels)
+  - Average validation accuracy (mm)
+  - Average validation precision SD (mm)
+  - Average validation precision RMS (mm)
+  - Average validation accuracy (degrees)
+  - Average validation precision SD (degrees)
+  - Average validation precision RMS (degrees)
+  - Average validation accuracy (pixels)
+  - Average validation precision SD (pixels)
+  - Average validation precision RMS (pixels)
+  - Eyetracker timestamp
+  - Event
+  - Event value
+  - Gaze point X
+  - Gaze point Y
+  - Gaze point left X
+  - Gaze point left Y
+  - Gaze point right X
+  - Gaze point right Y
+  - Gaze direction left X
+  - Gaze direction left Y
+  - Gaze direction left Z
+  - Gaze direction right X
+  - Gaze direction right Y
+  - Gaze direction right Z
+  - Pupil diameter left
+  - Pupil diameter right
+  - Pupil diameter filtered
+  - Validity left
+  - Validity right
+  - Eye position left X (DACSmm)
+  - Eye position left Y (DACSmm)
+  - Eye position left Z (DACSmm)
+  - Eye position right X (DACSmm)
+  - Eye position right Y (DACSmm)
+  - Eye position right Z (DACSmm)
+  - Gaze point left X (DACSmm)
+  - Gaze point left Y (DACSmm)
+  - Gaze point right X (DACSmm)
+  - Gaze point right Y (DACSmm)
+  - Gaze point X (MCSnorm)
+  - Gaze point Y (MCSnorm)
+  - Gaze point left X (MCSnorm)
+  - Gaze point left Y (MCSnorm)
+  - Gaze point right X (MCSnorm)
+  - Gaze point right Y (MCSnorm)
+  - Presented Stimulus name
+  - Presented Media name
+  - Presented Media width
+  - Presented Media height
+  - Presented Media position X (DACSpx)
+  - Presented Media position Y (DACSpx)
+  - Original Media width
+  - Original Media height
+  - Eye movement type
+  - Gaze event duration
+  - Eye movement type index
+  - Fixation point X
+  - Fixation point Y
+  - Fixation point X (MCSnorm)
+  - Fixation point Y (MCSnorm)
+  - Targets
+  - Ungrouped
+  - AOI hit [3_1 - asystent]
+  - AOI hit [3_3 - asystent]
+  - AOI hit [3_2 - asystent]
+  - AOI hit [6_1 - bandama]
+  - AOI hit [6_3 - bandama]
+  - AOI hit [6_2 - bandama]
+  - AOI hit [6_1 - bluza]
+  - AOI hit [6_3 - bluza]
+  - AOI hit [6_2 - bluza]
+  - AOI hit [1_3 - chusteczki]
+  - AOI hit [1_2 - chusteczki]
+  - AOI hit [1_1 - chusteczki]
+  - AOI hit [6_1 - czapka]
+  - AOI hit [6_3 - czapka]
+  - AOI hit [6_2 - czapka]
+  - AOI hit [1_3 - dezodorant]
+  - AOI hit [1_2 - dezodorant]
+  - AOI hit [1_1 - dezodorant]
+  - AOI hit [5_1 - egzamin]
+  - AOI hit [5_2 - egzamin]
+  - AOI hit [5_3 - egzamin]
+  - AOI hit [4_1 - google]
+  - AOI hit [4_3 - google]
+  - AOI hit [4_2 - google]
+  - AOI hit [4_1 - interia]
+  - AOI hit [4_3 - interia]
+  - AOI hit [4_2 - interia]
+  - AOI hit [2_1 - klucz]
+  - AOI hit [2_2 - klucz]
+  - AOI hit [2_3 - klucz]
+  - AOI hit [2_1 - kod]
+  - AOI hit [2_2 - kod]
+  - AOI hit [2_3 - kod]
+  - AOI hit [2_1 - magnes]
+  - AOI hit [2_2 - magnes]
+  - AOI hit [2_3 - magnes]
+  - AOI hit [6_1 - maska]
+  - AOI hit [6_3 - maska]
+  - AOI hit [6_2 - maska]
+  - AOI hit [5_1 - oceny]
+  - AOI hit [5_2 - oceny]
+  - AOI hit [5_3 - oceny]
+  - AOI hit [4_1 - onet]
+  - AOI hit [4_3 - onet]
+  - AOI hit [4_2 - onet]
+  - AOI hit [3_1 - osoba1]
+  - AOI hit [3_3 - osoba1]
+  - AOI hit [3_2 - osoba1]
+  - AOI hit [3_1 - osoba2]
+  - AOI hit [3_3 - osoba2]
+  - AOI hit [3_2 - osoba2]
+  - AOI hit [3_1 - osoba3]
+  - AOI hit [3_3 - osoba3]
+  - AOI hit [3_2 - osoba3]
+  - AOI hit [4_1 - outlook]
+  - AOI hit [4_3 - outlook]
+  - AOI hit [4_2 - outlook]
+  - AOI hit [7_1 - plecak]
+  - AOI hit [7_3 - plecak]
+  - AOI hit [7_2 - plecak]
+  - AOI hit [7_1 - pudełko]
+  - AOI hit [7_3 - pudełko]
+  - AOI hit [7_2 - pudełko]
+  - AOI hit [1_3 - rękawiczki]
+  - AOI hit [1_2 - rękawiczki]
+  - AOI hit [1_1 - rękawiczki]
+  - AOI hit [7_1 - skrzynka]
+  - AOI hit [7_3 - skrzynka]
+  - AOI hit [7_2 - skrzynka]
+  - AOI hit [1_3 - talk]
+  - AOI hit [1_2 - talk]
+  - AOI hit [1_1 - talk]
+  - AOI hit [7_1 - torba]
+  - AOI hit [7_3 - torba]
+  - AOI hit [7_2 - torba]
+  - AOI hit [5_1 - wyniki]
+  - AOI hit [5_2 - wyniki]
+  - AOI hit [5_3 - wyniki]
+  - AOI hit [2_1 - wytrych]
+  - AOI hit [2_2 - wytrych]
+  - AOI hit [2_3 - wytrych]
+  - AOI hit [5_1 - zarzadzenie]
+  - AOI hit [5_2 - zarzadzenie]
+  - AOI hit [5_3 - zarzadzenie]
+
+Sample Rows:
+  Row 1:
+    Recording timestamp: 0
+    Computer timestamp: 2854251221
+    Sensor: 
+    Project name: CIT
+    Export date: 24.09.2025
+    Participant name: Participant1
+    gender: Female
+    FirstExamination: Eyetracker
+    group: guilty
+    Recording name: Recording1
+    Recording date: 29.05.2023
+    Recording date UTC: 29.05.2023
+    Recording start time: 09:11:11.205
+    Recording start time UTC: 07:11:11.205
+    Recording duration: 373253
+  Row 2:
+    Recording timestamp: 127209
+    Computer timestamp: 2854378430
+    Sensor: Eye Tracker
+    Project name: CIT
+    Export date: 24.09.2025
+    Participant name: Participant1
+    gender: Female
+    FirstExamination: Eyetracker
+    group: guilty
+    Recording name: Recording1
+    Recording date: 29.05.2023
+    Recording date UTC: 29.05.2023
+    Recording start time: 09:11:11.205
+    Recording start time UTC: 07:11:11.205
+    Recording duration: 373253
+  Row 3:
+    Recording timestamp: 135540
+    Computer timestamp: 2854386761
+    Sensor: Eye Tracker
+    Project name: CIT
+    Export date: 24.09.2025
+    Participant name: Participant1
+    gender: Female
+    FirstExamination: Eyetracker
+    group: guilty
+    Recording name: Recording1
+    Recording date: 29.05.2023
+    Recording date UTC: 29.05.2023
+    Recording start time: 09:11:11.205
+    Recording start time UTC: 07:11:11.205
+    Recording duration: 373253
+  Row 4:
+    Recording timestamp: 143875
+    Computer timestamp: 2854395096
+    Sensor: Eye Tracker
+    Project name: CIT
+    Export date: 24.09.2025
+    Participant name: Participant1
+    gender: Female
+    FirstExamination: Eyetracker
+    group: guilty
+    Recording name: Recording1
+    Recording date: 29.05.2023
+    Recording date UTC: 29.05.2023
+    Recording start time: 09:11:11.205
+    Recording start time UTC: 07:11:11.205
+    Recording duration: 373253
+  Row 5:
+    Recording timestamp: 152209
+    Computer timestamp: 2854403430
+    Sensor: Eye Tracker
+    Project name: CIT
+    Export date: 24.09.2025
+    Participant name: Participant1
+    gender: Female
+    FirstExamination: Eyetracker
+    group: guilty
+    Recording name: Recording1
+    Recording date: 29.05.2023
+    Recording date UTC: 29.05.2023
+    Recording start time: 09:11:11.205
+    Recording start time UTC: 07:11:11.205
+    Recording duration: 373253

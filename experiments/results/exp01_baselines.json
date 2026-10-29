@@ -1,0 +1,122 @@
+{
+  "experiment_id": "EXP-01-BASELINES-ZENODO",
+  "description": "Participant-grouped cross-validation of baseline models on 38 Tobii participants",
+  "data_provenance": "Zenodo DOI 10.5281/zenodo.18525952",
+  "timestamp": "2026-10-27T11:07:06.276306",
+  "n_participants": 38,
+  "total_trials": 819,
+  "models": {
+    "dummy": {
+      "model_name": "dummy",
+      "balanced_accuracy": 0.4813,
+      "balanced_accuracy_ci_95": [
+        0.4489,
+        0.5171
+      ],
+      "roc_auc": 0.4813,
+      "roc_auc_ci_95": [
+        0.4489,
+        0.5171
+      ],
+      "precision": 0.4955,
+      "recall": 0.519,
+      "f1_score": 0.507,
+      "brier_score": 0.5177,
+      "confusion_matrix": [
+        [
+          177,
+          222
+        ],
+        [
+          202,
+          218
+        ]
+      ],
+      "sample_count": 819
+    },
+    "logistic_regression": {
+      "model_name": "logistic_regression",
+      "balanced_accuracy": 0.6237,
+      "balanced_accuracy_ci_95": [
+        0.5925,
+        0.6568
+      ],
+      "roc_auc": 0.6768,
+      "roc_auc_ci_95": [
+        0.6357,
+        0.7109
+      ],
+      "precision": 0.6145,
+      "recall": 0.7286,
+      "f1_score": 0.6667,
+      "brier_score": 0.2246,
+      "confusion_matrix": [
+        [
+          207,
+          192
+        ],
+        [
+          114,
+          306
+        ]
+      ],
+      "sample_count": 819
+    },
+    "random_forest": {
+      "model_name": "random_forest",
+      "balanced_accuracy": 0.6285,
+      "balanced_accuracy_ci_95": [
+        0.5954,
+        0.6634
+      ],
+      "roc_auc": 0.6821,
+      "roc_auc_ci_95": [
+        0.6439,
+        0.7206
+      ],
+      "precision": 0.618,
+      "recall": 0.7357,
+      "f1_score": 0.6717,
+      "brier_score": 0.2246,
+      "confusion_matrix": [
+        [
+          208,
+          191
+        ],
+        [
+          111,
+          309
+        ]
+      ],
+      "sample_count": 819
+    },
+    "xgboost": {
+      "model_name": "xgboost",
+      "balanced_accuracy": 0.5912,
+      "balanced_accuracy_ci_95": [
+        0.5554,
+        0.6228
+      ],
+      "roc_auc": 0.6519,
+      "roc_auc_ci_95": [
+        0.6158,
+        0.6901
+      ],
+      "precision": 0.5968,
+      "recall": 0.631,
+      "f1_score": 0.6134,
+      "brier_score": 0.2418,
+      "confusion_matrix": [
+        [
+          220,
+          179
+        ],
+        [
+          155,
+          265
+        ]
+      ],
+      "sample_count": 819
+    }
+  }
+}

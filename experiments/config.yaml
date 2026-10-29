@@ -1,0 +1,63 @@
+# GazeGuard AI - Reproducible Experiment Configuration
+experiment_suite: "Quality-Aware Personalized Temporal Calibration (QPTC)"
+version: "1.0.0"
+random_seed: 42
+
+dataset:
+  primary_zenodo_doi: "10.5281/zenodo.18525952"
+  raw_directory: "./data/raw"
+  synthetic_directory: "./data/synthetic"
+  benchmark_cohort_size: 12
+  trials_per_participant: 12
+
+temporal_windows:
+  w0_500:
+    name: "Early visual orienting"
+    start_ms: 0.0
+    end_ms: 500.0
+  w500_1000:
+    name: "Intermediate appraisal"
+    start_ms: 500.0
+    end_ms: 1000.0
+  w1000_2000:
+    name: "Late visual exploration"
+    start_ms: 1000.0
+    end_ms: 2000.0
+  w_overall:
+    name: "Full trial viewing"
+    start_ms: 0.0
+    end_ms: 2000.0
+
+quality_thresholds:
+  min_valid_sample_ratio: 0.60
+  min_samples_first_500ms: 8
+  max_timestamp_jitter_ms: 40.0
+  min_tracker_confidence: 0.40
+
+calibration:
+  mode_a: "population_baseline"
+  mode_b: "personalized_baseline"
+  min_calibration_trials: 3
+  epsilon: 0.0001
+  min_variance_threshold: 0.001
+
+models:
+  dummy:
+    strategy: "prior"
+  logistic_regression:
+    penalty: "l2"
+    C: 1.0
+    max_iter: 1000
+  random_forest:
+    n_estimators: 100
+    max_depth: 4
+    min_samples_split: 3
+  xgboost:
+    n_estimators: 80
+    max_depth: 3
+    learning_rate: 0.05
+
+evaluation:
+  cross_validation: "GroupKFold"
+  n_splits: 5
+  bootstrap_resamples: 500
