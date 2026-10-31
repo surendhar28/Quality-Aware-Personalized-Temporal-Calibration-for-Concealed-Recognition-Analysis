@@ -1,6 +1,0 @@
-window_name,temporal_range_ms,features,n_features,balanced_accuracy,balanced_accuracy_pct,roc_auc,precision,recall,f1_score,brier_score
-Early Window,0-500 ms,early_probe_diff,1,0.5383,53.83,0.5212,0.5652,0.4024,0.4701,0.261
-Mid Window,500-1000 ms,mid_probe_diff,1,0.5364,53.64,0.5445,0.5503,0.5214,0.5355,0.2549
-Late Window,1000-2000 ms,late_probe_diff,1,0.5388,53.88,0.5599,0.5492,0.5714,0.5601,0.2535
-Full Exploration Window,0-7500 ms,"total_probe_diff, mean_fix_duration, fixation_count",3,0.6346,63.46,0.6819,0.6326,0.6929,0.6614,0.2278
-Multi-Temporal QPTC Framework,All Windows (0-7500 ms),"early_probe_diff, mid_probe_diff, late_probe_diff, total_probe_diff, mean_fix_duration, median_fix_duration, fixation_count",7,0.6285,62.85,0.6821,0.618,0.7357,0.6717,0.2246

@@ -1,6 +1,0 @@
-model_id,model_name,balanced_accuracy,balanced_acc_ci_lower_95,balanced_acc_ci_upper_95,roc_auc,roc_auc_ci_lower_95,roc_auc_ci_upper_95,precision,recall_sensitivity,specificity,f1_score,brier_score,true_negatives,false_positives,false_negatives,true_positives,total_trials,n_participants
-dummy,Dummy Classifier (Stratified Chance),0.4813,0.4494,0.5122,0.4813,0.4494,0.5122,0.4955,0.519,0.4436,0.507,0.5177,177,222,202,218,819,38
-logistic_regression,Logistic Regression (Calibrated L2),0.6237,0.5942,0.6555,0.6768,0.6414,0.7118,0.6145,0.7286,0.5188,0.6667,0.2246,207,192,114,306,819,38
-random_forest,Random Forest Classifier,0.6285,0.5974,0.6591,0.6821,0.6471,0.7161,0.618,0.7357,0.5213,0.6717,0.2246,208,191,111,309,819,38
-xgboost,XGBoost Classifier,0.5912,0.558,0.6251,0.6519,0.6171,0.6863,0.5968,0.631,0.5514,0.6134,0.2418,220,179,155,265,819,38
-weighted_ensemble,Calibrated Weighted Ensemble (0.1 LR + 0.5 RF + 0.4 XGB),0.6343,0.6007,0.666,0.675,0.6415,0.7106,0.6292,0.7071,0.5614,0.6659,0.2275,224,175,123,297,819,38

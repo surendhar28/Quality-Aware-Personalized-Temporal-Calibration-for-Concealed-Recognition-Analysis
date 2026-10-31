@@ -11,20 +11,7 @@ outputs/
 ├── baseline_metrics.csv
 ├── temporal_ablation_results.csv
 ├── quality_abstention_results.csv
-├── weighted_model_results.csv
-└── confusion_matrices/
-    ├── cm_dummy.csv
-    ├── cm_logistic_regression.csv
-    ├── cm_random_forest.csv
-    ├── cm_xgboost.csv
-    ├── cm_weighted_ensemble.csv
-    ├── cm_all_models_summary.csv
-    ├── cm_dummy.png
-    ├── cm_logistic_regression.png
-    ├── cm_random_forest.png
-    ├── cm_xgboost.png
-    ├── cm_weighted_ensemble.png
-    └── cm_comparison_grid.png
+└── weighted_model_results.csv
 """
 
 import os
@@ -74,10 +61,7 @@ def main():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data_path = os.path.join(base_dir, "data", "processed", "zenodo_features.csv")
     out_dir = os.path.join(base_dir, "outputs")
-    cm_dir = os.path.join(out_dir, "confusion_matrices")
-    
     os.makedirs(out_dir, exist_ok=True)
-    os.makedirs(cm_dir, exist_ok=True)
     
     print(f"Loading data from: {data_path}")
     df = pd.read_csv(data_path)
@@ -377,113 +361,6 @@ def main():
     weights_csv_path = os.path.join(out_dir, "weighted_model_results.csv")
     df_weights.to_csv(weights_csv_path, index=False)
     print(f"  -> Saved weighted ensemble evaluations to {weights_csv_path}")
-
-    # -------------------------------------------------------------------------
-    # 6. Confusion Matrices (CSV and Plots)
-    # -------------------------------------------------------------------------
-    print("\n[6/7] Generating confusion_matrices/ and publication heatmap plots...")
-    summary_cm_rows = []
-    
-    for m_name in all_eval_models:
-        cm = cm_dict[m_name]
-        tn, fp, fn, tp = cm.ravel()
-        
-        cm_df = pd.DataFrame(
-            cm,
-            index=['Actual: Innocent (0)', 'Actual: Concealed (1)'],
-            columns=['Predicted: Innocent (0)', 'Predicted: Concealed (1)']
-        )
-        csv_m_path = os.path.join(cm_dir, f"cm_{m_name}.csv")
-        cm_df.to_csv(csv_m_path)
-        
-        fig, ax = plt.subplots(figsize=(5, 4.2), dpi=200)
-        sns.heatmap(
-            cm, annot=True, fmt='d', cmap='Blues',
-            xticklabels=['Pred Control', 'Pred Guilty'],
-            yticklabels=['Actual Control', 'Actual Guilty'],
-            cbar=False, ax=ax, annot_kws={'size': 14, 'weight': 'bold'}
-        )
-        ax.set_title(f"{display_names[m_name]}\nParticipant-Level Confusion Matrix (N=38)", fontsize=10.5, fontweight='bold', pad=10)
-        ax.set_ylabel('True Condition', fontsize=10, fontweight='bold')
-        ax.set_xlabel('Predicted Condition', fontsize=10, fontweight='bold')
-        plt.tight_layout()
-        fig_path = os.path.join(cm_dir, f"cm_{m_name}.png")
-        fig.savefig(fig_path)
-        plt.close(fig)
-        
-        summary_cm_rows.append({
-            'model_id': m_name,
-            'model_name': display_names[m_name],
-            'true_negatives_control': int(tn),
-            'false_positives_false_alarm': int(fp),
-            'false_negatives_missed': int(fn),
-            'true_positives_detected': int(tp),
-            'total_participants': int(tn + fp + fn + tp),
-            'specificity_pct': round((tn / (tn + fp)) * 100, 2),
-            'sensitivity_recall_pct': round((tp / (tp + fn)) * 100, 2),
-            'accuracy_pct': round(((tp + tn) / (tn + fp + fn + tp)) * 100, 2)
-        })
-        
-    summary_cm_df = pd.DataFrame(summary_cm_rows)
-    summary_cm_df.to_csv(os.path.join(cm_dir, "cm_all_models_summary.csv"), index=False)
-    
-    # Combined Multi-panel Confusion Matrix Figure
-    fig, axes = plt.subplots(2, 3, figsize=(14, 9), dpi=200)
-    axes = axes.flatten()
-    
-    models_to_plot = [
-        ('dummy', 'Dummy Classifier', 'Purples'),
-        ('logistic_regression', 'Logistic Regression', 'Blues'),
-        ('random_forest', 'Random Forest (500 Trees)', 'Greens'),
-        ('xgboost', 'XGBoost (300 Trees)', 'Oranges'),
-        ('weighted_ensemble', 'Weighted Ensemble', 'YlGnBu')
-    ]
-    
-    for i, (m_id, m_label, colormap) in enumerate(models_to_plot):
-        cm = cm_dict[m_id]
-        ax = axes[i]
-        sns.heatmap(
-            cm, annot=True, fmt='d', cmap=colormap,
-            xticklabels=['Pred Control', 'Pred Guilty'],
-            yticklabels=['True Control', 'True Guilty'],
-            cbar=False, ax=ax, annot_kws={'size': 13, 'weight': 'bold'}
-        )
-        bacc_val = baseline_records[all_eval_models.index(m_id)]['balanced_accuracy'] * 100
-        auc_val = baseline_records[all_eval_models.index(m_id)]['roc_auc']
-        ax.set_title(f"{m_label}\nBal Acc: {bacc_val:.1f}% | AUC: {auc_val:.3f}", fontsize=11, fontweight='bold', pad=8)
-        ax.set_ylabel('True Condition', fontsize=10)
-        ax.set_xlabel('Predicted Condition', fontsize=10)
-        
-    ax_bar = axes[5]
-    comp_df = pd.DataFrame(baseline_records)
-    short_names = ['Dummy', 'LogReg', 'RF', 'XGBoost', 'Weighted Ens']
-    bars = ax_bar.bar(
-        short_names,
-        comp_df['balanced_accuracy'] * 100,
-        color=['#94A3B8', '#6366F1', '#0284C7', '#10B981', '#F59E0B'],
-        edgecolor='#1E293B', lw=1.2
-    )
-    ax_bar.set_ylim([30, 85])
-    ax_bar.axhline(50, color='gray', linestyle='--', alpha=0.7, label='Chance (50%)')
-    ax_bar.set_ylabel('Balanced Accuracy (%)', fontsize=10, fontweight='bold')
-    ax_bar.set_title('Cross-Validated Model Comparison (N=38)', fontsize=11, fontweight='bold', pad=8)
-    ax_bar.tick_params(axis='x', rotation=25)
-    for bar in bars:
-        height = bar.get_height()
-        ax_bar.annotate(f'{height:.1f}%',
-            xy=(bar.get_x() + bar.get_width() / 2, height),
-            xytext=(0, 3), textcoords="offset points",
-            ha='center', va='bottom', fontsize=9, fontweight='bold'
-        )
-    ax_bar.grid(axis='y', linestyle='--', alpha=0.5)
-    
-    plt.suptitle("Participant-Level Confusion Matrices & Performance on Zenodo Physical Benchmark (N=38)",
-                 fontsize=13, fontweight='bold', y=0.98)
-    plt.tight_layout(rect=[0, 0, 1, 0.96])
-    grid_fig_path = os.path.join(cm_dir, "cm_comparison_grid.png")
-    fig.savefig(grid_fig_path)
-    plt.close(fig)
-    print(f"  -> Saved all confusion matrices and heatmaps to {cm_dir}")
 
     print("\n" + "=" * 70)
     print("ALL ESSENTIAL EXPERIMENT OUTPUTS GENERATED SUCCESSFULLY (Revision 12)!")

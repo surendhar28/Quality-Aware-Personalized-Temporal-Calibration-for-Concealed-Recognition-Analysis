@@ -6,10 +6,10 @@ capturing stdout and inline 150-DPI publication plots into the notebook JSON.
 
 Notebooks:
 1. notebooks/01_dataset_audit.ipynb
-2. notebooks/02_raw_feature_extraction.ipynb (and 02_feature_extraction.ipynb)
-3. notebooks/03_fresh_baseline_experiment.ipynb (and 03_baseline_models.ipynb)
-4. notebooks/04_temporal_ablation.ipynb (and 04_personalized_calibration.ipynb)
-5. notebooks/05_quality_abstention.ipynb (and 05_temporal_quality_ablation.ipynb)
+2. notebooks/02_raw_feature_extraction.ipynb
+3. notebooks/03_fresh_baseline_experiment.ipynb
+4. notebooks/04_temporal_ablation.ipynb
+5. notebooks/05_quality_abstention.ipynb
 """
 
 import os
@@ -258,7 +258,6 @@ plt.show()"""
     cells.append(execute_code_cell(c2, ns, 2))
 
     save_notebook("notebooks/02_raw_feature_extraction.ipynb", cells)
-    save_notebook("notebooks/02_feature_extraction.ipynb", cells)
 
 # -----------------------------------------------------------------------------
 # Notebook 03: Fresh Baseline Experiment
@@ -325,7 +324,6 @@ plt.show()"""
     cells.append(execute_code_cell(c2, ns, 2))
 
     save_notebook("notebooks/03_fresh_baseline_experiment.ipynb", cells)
-    save_notebook("notebooks/03_baseline_models.ipynb", cells)
 
 # -----------------------------------------------------------------------------
 # Notebook 04: Temporal Ablation & Personalization Status
@@ -386,7 +384,6 @@ plt.show()"""
     cells.append(execute_code_cell(c2, ns, 2))
 
     save_notebook("notebooks/04_temporal_ablation.ipynb", cells)
-    save_notebook("notebooks/04_personalized_calibration.ipynb", cells)
 
 # -----------------------------------------------------------------------------
 # Notebook 05: Quality Abstention
@@ -443,7 +440,6 @@ plt.show()"""
     cells.append(execute_code_cell(c2, ns, 2))
 
     save_notebook("notebooks/05_quality_abstention.ipynb", cells)
-    save_notebook("notebooks/05_temporal_quality_ablation.ipynb", cells)
 
 def main():
     print("=" * 70)
