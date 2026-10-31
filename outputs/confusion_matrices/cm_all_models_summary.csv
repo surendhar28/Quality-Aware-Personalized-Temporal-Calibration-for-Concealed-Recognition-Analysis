@@ -1,0 +1,6 @@
+model_id,model_name,true_negatives_control,false_positives_false_alarm,false_negatives_missed,true_positives_detected,total_trials,specificity_pct,sensitivity_recall_pct,accuracy_pct
+dummy,Dummy Classifier (Stratified Chance),177,222,202,218,819,44.36,51.9,48.23
+logistic_regression,Logistic Regression (Calibrated L2),207,192,114,306,819,51.88,72.86,62.64
+random_forest,Random Forest Classifier,208,191,111,309,819,52.13,73.57,63.13
+xgboost,XGBoost Classifier,220,179,155,265,819,55.14,63.1,59.22
+weighted_ensemble,Calibrated Weighted Ensemble (0.1 LR + 0.5 RF + 0.4 XGB),224,175,123,297,819,56.14,70.71,63.61
