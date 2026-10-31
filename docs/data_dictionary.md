@@ -1,47 +1,48 @@
-# GazeGuard AI — Data Dictionary & Canonical Schema Specification
+# GazeGuard AI — Data Dictionary & Canonical Schema Specification (Revision 12)
 
-## 1. Verified Primary Benchmark Dataset
+## 1. Verified Primary Benchmark Dataset Provenance
 - **Title**: Eye tracking as a Tool for deception detection with CIT
 - **Persistent DOI**: `10.5281/zenodo.18525952`
 - **Authors**: Weronika Celniak, Dominika Słapczyńska, Beata Jarszak, Piotr Augustyniak
 - **Publisher**: Zenodo (February 8, 2026)
 - **License**: Creative Commons Attribution 4.0 International (`CC-BY-4.0`)
-- **Cohort**: 39 participants (20 experimental guilty group, 19 innocent control group).
-- **Apparatus**: Tobii Pro Fusion Desktop Eye Tracker (120–250 Hz) on 27-inch Full HD Monitor.
-- **Experimental Protocol**: 4-item stimulus array (1 critical probe item, 3 neutral irrelevant items) presented for 7.5 seconds per trial, repeated 3 times with randomized spatial positions.
+- **Hardware Apparatus**: Tobii Pro Fusion Desktop Eye Tracker (120–250 Hz) on 27-inch Full HD Monitor (1920×1080).
+- **Physical Protocol**: 4-item visual array (1 critical probe item, 3 neutral irrelevant items) presented for 7.5 seconds (7,500 ms) per trial, repeated across 3 exposures with randomized spatial arrangements.
+- **Participant Mapping**: 39 recording workbooks (`CIT Recording1.xlsx` to `CIT Recording40.xlsx`, omitting #14). Recording files 25 and 27 both correspond to `Participant25`, yielding **38 processed biological participants** (20 guilty, 18 control).
 
-## 2. Canonical Ingestion Schema Mappings
+---
 
-| Canonical Field Name | Type | Description | Source Mapping (Tobii CIT Recording) |
-|---|---|---|---|
-| `participant_id` | String | Pseudonymous participant identifier (e.g., `P01`) | Parsed from file name `CIT Recording*.xlsx` |
-| `trial_id` | String | Unique trial identifier (e.g., `P01_T01`) | Derived trial index |
-| `stimulus_id` | String | Identifier of presented visual stimulus | Column `Stimulus Name` or `Media Name` |
-| `stimulus_name` | String | Human-readable name of visual item | Column `Presented Stimulus name` |
-| `condition` | Enum | `probe`, `irrelevant`, `target`, `calibration` | Mapped from stimulus metadata |
-| `familiarity_ground_truth` | Int (0/1) | Ground truth familiarity (1=familiar, 0=unfamiliar) | Assigned strictly based on experimental condition |
-| `timestamp_ms` | Float | Milliseconds elapsed from stimulus onset | Column `Recording timestamp` |
-| `gaze_x` | Float | Normalized horizontal gaze coordinate $[0.0, 1.0]$ | Column `Gaze point X` normalized by display width (1920) |
-| `gaze_y` | Float | Normalized vertical gaze coordinate $[0.0, 1.0]$ | Column `Gaze point Y` normalized by display height (1080) |
-| `valid` | Boolean | True if gaze point was successfully acquired | Derived from coordinate range and tracking validity |
-| `event_type` | String | Fixation, saccade, or unclassified | Column `Eye movement type` (when precomputed) |
+## 2. Evaluated Feature Dictionary (11 Baseline Features)
 
-## 3. Derived Multi-Window Feature Dictionary
+The authoritative baseline experiment uses the following 11 numeric predictors from `data/processed/zenodo_features.csv`:
 
-Features extracted per temporal window ($W \in \{\text{w0\_500}, \text{w500\_1000}, \text{w1000\_2000}, \text{w\_overall}\}$):
+| Feature Name | Type | Unit | Formula / Source | Provenance & Validation Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `valid_sample_ratio` | Float | Ratio $[0.0, 1.0]$ | $N_{\text{valid}} / N_{\text{total}}$ | Proportion of eye tracker samples marked valid by Tobii tracker during the trial. |
+| `early_window_sample_count` | Int | Count | $\sum_{t=0}^{500\text{ ms}} 1_{[\text{sample acquired}]}$ | Number of raw samples recorded in the first 500 ms post-stimulus onset. |
+| `early_probe_fix_dur` | Float | Milliseconds (ms) | $\sum \text{Dur}(\text{Fixations}_{\text{Probe}}, 0\text{–}500\text{ ms})$ | Cumulative fixation duration inside the probe Area of Interest (AOI) during 0–500 ms. |
+| `early_irrel_fix_dur` | Float | Milliseconds (ms) | $\frac{1}{3} \sum_{k=1}^3 \text{Dur}(\text{Fixations}_{\text{Irrel}_k}, 0\text{–}500\text{ ms})$ | Mean fixation duration across the three irrelevant control AOIs during 0–500 ms. |
+| `early_probe_diff` | Float | Milliseconds (ms) | $\text{early\_probe\_fix\_dur} - \text{early\_irrel\_fix\_dur}$ | Divergence in visual orienting dwell between critical and irrelevant items (0–500 ms). |
+| `mid_probe_diff` | Float | Milliseconds (ms) | $\text{Dur}(\text{Fix}_{\text{Probe}}, 500\text{–}1000) - \text{Dur}(\text{Fix}_{\text{Irrel}}, 500\text{–}1000)$ | Dwell difference during intermediate appraisal window (500–1000 ms). |
+| `late_probe_diff` | Float | Milliseconds (ms) | $\text{Dur}(\text{Fix}_{\text{Probe}}, 1000\text{–}2000) - \text{Dur}(\text{Fix}_{\text{Irrel}}, 1000\text{–}2000)$ | Dwell difference during late conscious exploration window (1000–2000 ms). |
+| `total_probe_diff` | Float | Milliseconds (ms) | $\text{Dur}(\text{Fix}_{\text{Probe}}, 0\text{–}7500) - \text{Dur}(\text{Fix}_{\text{Irrel}}, 0\text{–}7500)$ | Total dwell difference across the entire 7.5-second trial presentation. |
+| `mean_fix_duration` | Float | Milliseconds (ms) | $\frac{1}{N_{\text{fix}}} \sum_{i=1}^{N_{\text{fix}}} \text{Dur}_i$ | Mean duration of all parsed fixation events in trial. Depends on upstream Tobii I-VT filter parameters. |
+| `median_fix_duration` | Float | Milliseconds (ms) | $\text{Median}(\{\text{Dur}_i\}_{i=1}^{N_{\text{fix}}})$ | Median duration of all parsed fixation events in trial. |
+| `fixation_count` | Int | Count | $N_{\text{fix}}$ | Total count of discrete fixation events parsed across the entire trial duration. |
 
-| Feature Key | Type | Unit | Definition |
-|---|---|---|---|
-| `{W}_fix_count` | Int | Count | Total number of discrete fixation events overlapping window $W$ |
-| `{W}_total_dur` | Float | Milliseconds | Cumulative duration of all fixations inside window $W$ |
-| `{W}_mean_dur` | Float | Milliseconds | Arithmetic mean of fixation durations inside window $W$ |
-| `{W}_median_dur` | Float | Milliseconds | Median fixation duration inside window $W$ |
-| `{W}_first_dur` | Float | Milliseconds | Duration of the very first fixation initiated or overlapping window $W$ |
-| `{W}_first_latency` | Float | Milliseconds | Time elapsed from stimulus onset ($t=0$) to start of first fixation |
-| `{W}_valid_ratio` | Float | $[0.0, 1.0]$ | Ratio of valid gaze samples acquired within window $W$ |
-| `{W}_mean_dur_z` | Float | Z-Score | Participant-baseline normalized mean fixation difference |
+---
 
-## 4. Methodological Assumptions & Boundary Conditions
-1. **Four-Item Array vs. Single-Item Presentation**: The Zenodo primary dataset presents 4-item visual arrays over 7.5 seconds, while browser CIT protocols often present single isolated stimuli over 2.0 seconds. The adapter isolates stimulus onset intervals to support comparison.
-2. **Dedicated Hardware vs. Webcam Spatial Resolution**: Tobii Pro Fusion provides spatial accuracy of ~0.4°–0.8° visual angle at 120–250 Hz. Browser webcam estimation achieves ~1.5°–3.0° at 30–60 Hz with higher noise and blink artifacts.
-3. **Absence of Ground Truth Fabrications**: Labels are derived strictly from experimental design assignments; stimulus familiarity ground truth is never inferred from gaze measurements.
+## 3. Metadata & Contextual Trial Attributes
+
+| Field Name | Type | Unit / Format | Description & Scientific Constraints |
+| :--- | :--- | :--- | :--- |
+| `participant_id` | String | Categorical | Anonymized participant identifier (`Participant1` to `Participant40`, excluding #14). |
+| `filename` | String | Filename | Source recording workbook in `data/processed/` (`CIT Recording*.xlsx`). |
+| `group` | String | `guilty` / `control` | Experimental mock-crime condition assigned to participant. |
+| `gender` | String | `Female` / `Male` | Participant self-reported demographic gender. |
+| `calibration_accuracy_deg` | Float | Degrees (°) | Visual angle calibration error measured prior to recording session (Mean: ~0.26°). |
+| `trial_id` | String | String | Compound key: `{Participant}_{Stimulus}_{Repetition}` (e.g., `Participant1_1_1`). |
+| `stimulus_name` | String | Code | Identifier for stimulus item configuration (e.g., `1_1`, `2_1`). |
+| `category` | Int | $1 \dots 6$ | Stimulus category code (1 = Probe Target, 2..6 = Irrelevant Controls). |
+| `repetition` | Int | $1, 2, 3$ | Repetition exposure index for the visual stimulus array. |
+| `familiarity_label` | Int | $0$ or $1$ | Supervised ground truth: 1 for Guilty group (probe familiar), 0 for Control group (all unfamiliar). **Constant within each participant.** |

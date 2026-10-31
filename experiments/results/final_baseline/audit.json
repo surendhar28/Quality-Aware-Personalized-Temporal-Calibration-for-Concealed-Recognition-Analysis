@@ -1,0 +1,24 @@
+{
+  "dataset_sha256": "7a7275b274f84ce9ce5558ca1f737eb702c08e6c7bf5a08bc60aaa020bc2eb59",
+  "dataset_rows": 819,
+  "dataset_participants": 38,
+  "features": [
+    "valid_sample_ratio",
+    "early_window_sample_count",
+    "early_probe_fix_dur",
+    "early_irrel_fix_dur",
+    "early_probe_diff",
+    "mid_probe_diff",
+    "late_probe_diff",
+    "total_probe_diff",
+    "mean_fix_duration",
+    "median_fix_duration",
+    "fixation_count"
+  ],
+  "n_features": 11,
+  "split_strategy": "StratifiedGroupKFold",
+  "n_splits": 5,
+  "primary_unit": "participant",
+  "leakage_check_passed": true,
+  "timestamp": "2026-10-31T08:45:07.796788Z"
+}

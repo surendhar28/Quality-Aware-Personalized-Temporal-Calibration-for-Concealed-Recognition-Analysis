@@ -1,5 +1,5 @@
 # Quality-Aware-Personalized-Temporal-Calibration-for-Concealed-Recognition-Analysis
-### GazeGuard AI: Research Platform & Interactive Scientific Benchmark
+### GazeGuard AI: Research Platform & Interactive Scientific Benchmark (Revision 12)
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-1.0.0-009688.svg)](https://fastapi.tiangolo.com/)
@@ -7,126 +7,125 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.4-3178C6.svg)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC.svg)](https://tailwindcss.com/)
 [![License: CC-BY 4.0](https://img.shields.io/badge/License-CC--BY--4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
-[![Tests](https://img.shields.io/badge/Tests-19%2F19%20Passed-emerald.svg)]()
-
-> **RESEARCH DISCLAIMER:**  
-> GazeGuard AI is an experimental scientific instrument investigating Concealed Information Test (CIT) gaze dynamics.  
-> **Under NO circumstances should this system be used to label individuals as liars, deceptive, guilty, or dishonest.**  
-> Eye movements reflect idiosyncratic gaze habits, cognitive salience, and visual orienting, and do NOT constitute proof of deception.
+[![Verification](https://img.shields.io/badge/Reproducibility-8%2F8%20Checks%20Passed-emerald.svg)]()
 
 ---
 
-## 1. Project Overview & Research Contribution
-GazeGuard AI investigates the following core research question:
-> **Does participant-specific calibration, combined with temporal fixation analysis (0–500 ms) and tracking-quality assessment, improve the reliability of familiarity-related classification when gaze measurements are noisy?**
+## Research Status and Experimental Scope
 
-The framework investigates **Quality-Aware Personalized Temporal Calibration (QPTC)**:
-1. **Multi-Window Temporal Slicing**: Isolates early involuntary orienting ($[0, 500\text{ ms}]$) from intermediate ($[500, 1000\text{ ms}]$) and late exploratory viewing ($[1000, 2000\text{ ms}]$).
-2. **Personalized Baseline Calibration (Mode B)**: Computes participant-specific z-score normalization anchored strictly in neutral exposure trials, preventing cross-trial label leakage.
-3. **Quality-Aware Abstention Engine**: Transparently rejects trials with $<60\%$ valid gaze density or high timestamp jitter, reducing classification error without excessive coverage loss.
-4. **Explainable SHAP Feature Attributions**: Provides per-stimulus feature importance without making unwarranted causal claims regarding mental states.
+GazeGuard AI is an experimental research platform for studying eye-tracking-derived features in a Concealed Information Test (CIT) setting.
+
+### Experimentally Evaluated
+
+- An 819-row derived-feature table containing 38 processed participant IDs.
+- Eleven numeric predictors (`valid_sample_ratio`, `early_window_sample_count`, `early_probe_fix_dur`, `early_irrel_fix_dur`, `early_probe_diff`, `mid_probe_diff`, `late_probe_diff`, `total_probe_diff`, `mean_fix_duration`, `median_fix_duration`, `fixation_count`).
+- Five-fold stratified participant-grouped cross-validation (`StratifiedGroupKFold`, $k=5$, `random_state=42`).
+- Logistic Regression, Random Forest (500 trees) and XGBoost (300 trees) baselines.
+- Participant-level mean aggregation of out-of-fold prediction scores.
+- Participant-stratified bootstrap uncertainty estimates (10,000 resamples).
+
+### Proposed or Pending Validation
+
+- Raw eye-tracking workbook processing and complete feature-provenance verification.
+- Participant-specific baseline calibration.
+- Validation-selected quality-aware abstention.
+- Temporal-window ablation using the final reproducible experiment.
+- Fold-specific SHAP analysis.
+- Independent external validation.
+
+### Research Disclaimer
+
+The evaluated target is a supplied participant-condition label that remains constant within each participant. Model predictions must not be interpreted as stimulus-specific recognition, deception, guilt, intent or evidence of dishonesty. The current baseline experiment does not establish the effectiveness of the complete QPTC framework.
 
 ---
 
-## 2. Benchmark Datasets & Provenance
+## 1. Verified Benchmark Dataset & Provenance
 
-### Primary Real Dataset
 - **Title**: Eye tracking as a Tool for deception detection with CIT
 - **Persistent DOI**: [10.5281/zenodo.18525952](https://zenodo.org/records/18525952)
 - **Authors**: Weronika Celniak, Dominika Słapczyńska, Beata Jarszak, Piotr Augustyniak (AGH University of Krakow & Forensic Laboratory of Police Headquarters in Katowice)
 - **Publication Date**: February 8, 2026 | **License**: Creative Commons Attribution 4.0 International (`CC-BY-4.0`)
 - **Apparatus**: Tobii Pro Fusion Desktop Eye Tracker (120–250 Hz) on 27-inch Full HD Monitor.
-- **Cohort**: 39 participants (20 experimental guilty group, 19 innocent control group).
-
-### Automated Download Notice & Synthetic Fallback
-Zenodo applies automated Cloudflare bot protection (`HTTP 403 Forbidden`) on direct non-browser requests from agent/server environments.
-- **To use real hardware files**: Navigate to `https://zenodo.org/records/18525952` in a browser, download `CIT Recording1.xlsx` through `CIT Recording40.xlsx`, and place them into `data/raw/`.
-- **Synthetic Test Mode**: When real files are not present in `data/raw/`, GazeGuard AI automatically operates in clearly watermarked **Synthetic Test Mode**, ensuring fully reproducible software verification.
+- **Recording Files**: 39 workbooks (`CIT Recording1.xlsx` through `CIT Recording40.xlsx`, excluding #14).
+- **Participants**: 38 biological participants (Recordings 25 and 27 both correspond to `Participant25`).
+- **Canonical Feature Table**: `data/processed/zenodo_features.csv` (819 rows, SHA-256: `7a7275b274f84ce9ce5558ca1f737eb702c08e6c7bf5a08bc60aaa020bc2eb59`).
 
 ---
 
-## 3. Quick Start & Execution Commands
+## 2. Benchmark Evaluation Results (Revision 12 Fresh Baseline)
 
-### Prerequisites
-- Python 3.11+
-- Node.js v18+ and npm
+Evaluated under leak-free 5-fold `StratifiedGroupKFold` cross-validation grouped strictly by `participant_id` ($N=38$ participants, 819 trials), with **10,000 participant-stratified bootstrap resamples** for 95% Confidence Intervals:
+
+| Architecture | Balanced Accuracy [95% CI] | ROC-AUC [95% CI] | Precision | Recall | Specificity | F1 Score | Brier Score |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Dummy (Chance Baseline)** | 39.47% [23.7%, 55.3%] | 0.346 [0.186, 0.523] | 0.381 | 0.400 | 0.389 | 0.390 | 0.375 |
+| **Logistic Regression ($L_2$)** | 65.79% [50.0%, 79.0%] | 0.709 [0.529, 0.875] | 0.696 | 0.800 | 0.611 | 0.744 | 0.222 |
+| **Random Forest (500 Trees)** | **71.05%** [55.3%, 84.2%] | **0.781** [0.615, 0.920] | **0.750** | **0.750** | **0.667** | **0.750** | **0.210** |
+| **XGBoost Classifier** | 65.79% [50.0%, 81.6%] | 0.704 [0.526, 0.862] | 0.727 | 0.800 | 0.611 | 0.762 | 0.246 |
+
+*External Reference:* A 94.9% accuracy figure was reported in external literature using alternative cross-validation methods without participant grouping constraints.
+
+---
+
+## 3. Reproducibility & Automated Verification
+
+### Execute the Fresh Baseline Experiment
+```bash
+python scripts/run_fresh_grouped_experiment.py
+```
+
+### Execute Temporal Window & Quality Abstention Ablations
+```bash
+python scripts/run_temporal_ablation.py
+python scripts/run_quality_abstention.py
+```
+
+### Run Automated 8-Point Reproducibility Suite
+```bash
+python scripts/verify_experiment.py
+```
+
+All 8 verification checks must pass:
+1. Dataset SHA-256 matches `data/manifests/dataset_manifest.json`
+2. Exactly 819 rows and 38 processed participant IDs
+3. All 11 features present and verified
+4. Zero participant leakage across cross-validation folds
+5. Exactly 819 out-of-fold predictions
+6. Participant predictions equal the mean of held-out row probabilities
+7. Dynamically recalculated metrics match saved `metrics.json`
+8. Runtime environment provenance validated
+
+---
+
+## 4. Quick Start: Interactive Research Application
 
 ### 1. Start the FastAPI Backend
 ```bash
-# In project root
 python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
-- API Documentation (Swagger UI): `http://127.0.0.1:8000/docs`
+- API Documentation: `http://127.0.0.1:8000/docs`
 - Health check: `http://127.0.0.1:8000/api/health`
 
-### 2. Start the React Frontend
+### 2. Start the React Frontend Dashboard
 ```bash
 cd frontend
-cmd /c npm run dev
+npm run dev
 ```
-- Open browser at: `http://localhost:5173`
+- Dashboard URL: `http://localhost:5173`
 
----
-
-## 4. Automated Test Suite
-To run all 19 unit and integration tests across feature extraction, personalized calibration, leakage prevention, quality abstention, and API routes:
-
+### 3. Run Backend Test Suite
 ```bash
 python -m pytest backend/tests -v
 ```
 
-**Results:**
-- `test_features.py`: 3 passed (IVT velocity threshold detector, multi-window slicing)
-- `test_quality_abstention.py`: 3 passed (sample density, missingness, jitter rejection)
-- `test_calibration.py`: 3 passed (z-score computation, leakage prevention, variance safeguard)
-- `test_ml_pipeline.py`: 4 passed (Dummy, Logistic Regression, Random Forest, XGBoost)
-- `test_api.py`: 5 passed (health, dataset audit, consent enforcement, trial ingestion, experiment run)
-- `test_synthetic_fixture.py`: 1 passed (exact mathematical proof of feature calculations)
-- **Total:** **19 passed in ~15s**
-
 ---
 
-## 5. Research Scripts & Reproducibility
+## 5. Repository Documentation Index
 
-### Audit Datasets
-```bash
-python scripts/audit_dataset.py --target auto
-```
-
-### Run Scientific Ablation Experiments
-```bash
-python scripts/run_experiments.py
-```
-Outputs complete JSON results to `experiments/results/`:
-- `exp01_baselines.json`: Dummy vs LogReg vs Random Forest vs XGBoost.
-- `exp02_personalization.json`: Mode A (Population) vs Mode B (Personalized QPTC) ablation.
-- `exp03_temporal_windows.json`: Early window (0–500 ms) contribution ablation.
-- `exp04_quality_abstention.json`: Coverage vs error rate trade-off curve.
-- `exp06_robustness.json`: Tracking noise and missing sample stress tests.
-
-### Research Jupyter Notebooks
-- `notebooks/01_dataset_audit.ipynb`: Dataset inspection and schema audit.
-- `notebooks/02_feature_extraction.ipynb`: I-VT algorithm and window extraction.
-- `notebooks/03_baseline_models.ipynb`: Grouped cross-validation model evaluation.
-- `notebooks/04_personalized_calibration.ipynb`: Personalization delta verification.
-- `notebooks/05_temporal_quality_ablation.ipynb`: Temporal and abstention ablation curves.
-
----
-
-## 6. Frontend Navigation (9 Dedicated Scientific Pages)
-1. **Research Dashboard (`/`)**: High-level metrics, dataset audit status, live tracking-quality distributions, active provenance indicator.
-2. **Consent & Participant Setup (`/consent`)**: Ethical disclosure, voluntary consent confirmation, pseudonymous identifier generation, camera test with graceful fallback, clear local data option.
-3. **Calibration (`/calibration`)**: 9-point spatial calibration sequence, gaze dot feedback, spatial error vs completion rate distinction, repeat calibration option.
-4. **Stimulus Experiment (`/experiment`)**: Randomized CIT presentation, 500 ms central fixation cross, 2000 ms stimulus presentation, real-time gaze recording with 0–500 ms early window indicators.
-5. **Signal Analysis (`/signal`)**: Time-series plots $X(t), Y(t)$, I-VT fixation boundaries, stimulus onset markers, missing interval diagnostics.
-6. **Model Comparison (`/models`)**: Logistic Regression vs Random Forest vs XGBoost vs Dummy, ROC-AUC, Balanced Accuracy, Confusion Matrix, Brier loss, 95% bootstrap confidence intervals.
-7. **Explainable Report (`/report`)**: Calibrated familiarity probability (never guilt/deception!), SHAP feature attributions, quality warnings, abstention badges, export JSON and print options.
-8. **Research Experiments (`/research`)**: Interactive workspace running Experiments 1, 2, 3, 4, and 6 with interactive Recharts graphs.
-9. **Settings & Documentation (`/settings`)**: Temporal window lengths, quality thresholds, storage paths, and BibTeX citations for Celniak et al. (2026).
-
----
-
-## 7. Forensic & Ethical Boundaries
-- **No Accusations:** GazeGuard AI is an academic research instrument. It never labels individuals as deceptive, liars, or guilty.
-- **No Raw Video Storage:** Raw webcam video is never recorded or stored. Processing is performed ephemerally in browser client memory.
-- **Prohibited Deployments:** Employment integrity testing, criminal interrogations, border credibility screening, and disciplinary determinations are strictly prohibited.
+- [`docs/experimental_protocol.md`](file:///e:/karthianna/docs/experimental_protocol.md): Formal analysis plan, StratifiedGroupKFold specification, and bootstrap methodology.
+- [`docs/data_dictionary.md`](file:///e:/karthianna/docs/data_dictionary.md): Specification for all 11 features and trial metadata.
+- [`docs/reproducibility.md`](file:///e:/karthianna/docs/reproducibility.md): Complete instructions for environment setup and experiment reproduction.
+- [`docs/model_card.md`](file:///e:/karthianna/docs/model_card.md): Model performance, primary evaluation units, and limitations.
+- [`docs/limitations.md`](file:///e:/karthianna/docs/limitations.md): Participant/session provenance (39 workbooks to 38 participants) and target label constraints.
+- [`docs/ethics_and_privacy.md`](file:///e:/karthianna/docs/ethics_and_privacy.md): Distinguishing verified safeguards from intended protections.
+- [`docs/architecture.md`](file:///e:/karthianna/docs/architecture.md): Delineation of evaluated baseline modules and proposed QPTC modules.

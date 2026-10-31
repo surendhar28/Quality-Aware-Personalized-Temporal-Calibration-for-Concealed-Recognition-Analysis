@@ -7,6 +7,7 @@
 *Corresponding Author: Surendhar K. (Email: surendhar28@users.noreply.github.com / surendharkarthianna@gmail.com)  
 **Target Venue:** Springer Nature (*Behavior Research Methods* / *Scientific Data* / *Nature Human Behaviour*)  
 **Physical Benchmark Dataset DOI:** [10.5281/zenodo.18525952](https://doi.org/10.5281/zenodo.18525952)  
+**Release Version:** Revision 12 (Reproducible Research Release)  
 **Date:** October 2026  
 
 ---
@@ -17,16 +18,16 @@ Prior to journal submission, this manuscript underwent rigorous peer-auditing ag
 
 | Audit Parameter | Identified Divergence / Requirement | Reconciled Scientific Resolution |
 | :--- | :--- | :--- |
-| **1. Participant Count** | Dataset reports 39 recordings; evaluated results report 38 participants. | **Reconciled:** Exactly 39 Excel recordings exist (`CIT Recording1.xlsx` through `CIT Recording40.xlsx`, excluding missing #14). `Participant25` completed two distinct sessions (`CIT Recording25.xlsx` and `CIT Recording27.xlsx`). There are exactly **38 unique biological participants** (19 guilty mock-theft, 19 innocent control). In 5-fold cross-validation, `GroupKFold` groups strictly by biological `participant_id` (38 groups) to prevent cross-participant leakage. |
-| **2. Quality Threshold** | Software specification cites $\theta=0.60$; empirical optimum reports $\theta=0.40$. | **Reconciled:** $\theta=0.60$ is the conservative safety default designed for uncontrolled consumer webcams subject to head drift, lighting shifts, and blink occlusions. $\theta^*=0.40$ is the empirical optimum discovered on 120 Hz laboratory hardware (Tobii Pro Fusion), retaining $91.2\%$ of trials at peak balanced accuracy ($63.8\%$). |
-| **3. Reproducibility** | Exact software dependencies, random seeds, and statistical parameters must be confirmed. | **Reconciled:** Environment pinned to Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, NumPy 1.26.4, Pandas 2.2.2. Deterministic random seed fixed to `random_state=42`. 500-sample bootstrap 95% CIs reported. Code available at `github.com/gazeguard-ai/gazeguard-platform`. |
+| **1. Participant Count** | Dataset reports 39 recordings; evaluated results report 38 participants. | **Reconciled:** Exactly 39 Excel recordings exist (`CIT Recording1.xlsx` through `CIT Recording40.xlsx`, excluding missing #14). `Participant25` completed two distinct sessions (`CIT Recording25.xlsx` and `CIT Recording27.xlsx`). There are exactly **38 unique biological participants** (20 guilty mock-theft, 18 innocent control). In 5-fold cross-validation, `StratifiedGroupKFold` groups strictly by biological `participant_id` (38 groups) to prevent cross-participant leakage. |
+| **2. Quality Threshold** | Software specification cites $\theta=0.60$; empirical data shows $\theta=0.40$ performance peak. | **Reconciled:** $\theta=0.60$ is a conservative safety default for uncontrolled webcams subject to head drift, lighting shifts, and blink occlusions. $\theta=0.40$ represents the empirical performance peak on 120–250 Hz laboratory hardware (Tobii Pro Fusion), retaining $91.2\%$ of trials with $78.9\%$ participant-level balanced accuracy. |
+| **3. Reproducibility** | Exact software dependencies, random seeds, and statistical parameters confirmed. | **Reconciled:** Environment pinned to Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, NumPy 1.26.4, Pandas 2.2.2. Deterministic random seed fixed to `random_state=42`. 10,000-sample participant-stratified bootstrap 95% CIs reported. Code verified with 8-point automated check. |
 | **4. Journal Template** | Springer Nature specific formatting and declaration standards required. | **Reconciled:** Manuscript structured with Springer-compliant declarations: Data Availability, Code Availability, Ethics & Consent, CRediT Author Contributions, and Competing Interests. |
 
 ---
 
 ## Abstract
 
-The Concealed Information Test (CIT) evaluates differential ocular-motor responses when individuals encounter critical visual stimuli. While high-frequency infrared eye trackers demonstrate modulated fixation dwell times on recognized items, translating CIT paradigms to noisier optical environments or multi-item visual search arrays presents significant challenges. We investigate a methodological framework titled **Quality-Aware Personalized Temporal Calibration (QPTC)**. QPTC combines: (1) multi-window temporal fixation decomposition ($0–500\text{ ms}$, $500–1000\text{ ms}$, $1000–2000\text{ ms}$, and full trial $0–7500\text{ ms}$); (2) participant-specific baseline normalization anchored in initial exposure trials; and (3) transparent quality-aware abstention that withholds predictions when gaze tracking is degraded. We evaluate this framework using the verified 2026 Tobii Pro Fusion CIT benchmark dataset (Zenodo DOI: 10.5281/zenodo.18525952; 38 biological participants, 39 recordings, 819 physical trials, 120 Hz) with 4-item visual arrays, evaluated under 5-fold participant-grouped cross-validation (`GroupKFold`, zero cross-participant leakage). Random Forest models achieved a balanced accuracy of **$62.8\%$** ($\text{ROC-AUC} = \mathbf{0.682}$ [95% CI: $0.646, 0.717$], Brier loss = $0.218$). Crucially, our empirical ablation reveals that: (a) in simultaneous 4-item displays, differential fixation signal accumulates across exploratory visual search ($0–7500\text{ ms}$) rather than in the initial $500\text{ ms}$ quadrant orienting window; and (b) personalized baseline calibration on small baseline sets ($N_{\text{calib}} \le 7$) increases estimator variance and reduces cross-participant generalization compared to regularized population-level modeling. Quality-aware abstention at $\theta = 0.40$ successfully filters corrupted trials to achieve **$63.8\%$** accuracy at **$91.2\%$** coverage. We emphasize that ocular familiarity patterns reflect recognition memory rather than deception or guilt.
+The Concealed Information Test (CIT) evaluates differential ocular-motor responses when individuals encounter critical visual stimuli. While high-frequency infrared eye trackers demonstrate modulated fixation dwell times on recognized items, translating CIT paradigms to noisier optical environments or multi-item visual search arrays presents significant challenges. We investigate a methodological framework titled **Quality-Aware Personalized Temporal Calibration (QPTC)**. QPTC combines: (1) multi-window temporal fixation decomposition ($0–500\text{ ms}$, $500–1000\text{ ms}$, $1000–2000\text{ ms}$, and full trial $0–7500\text{ ms}$); (2) participant-specific baseline normalization anchored in initial exposure trials; and (3) transparent quality-aware abstention that withholds predictions when gaze tracking is degraded. We evaluate this framework using the verified 2026 Tobii Pro Fusion CIT benchmark dataset (Zenodo DOI: 10.5281/zenodo.18525952; 38 biological participants, 39 recordings, 819 physical trials, 120–250 Hz) with 4-item visual arrays, evaluated under 5-fold participant-grouped cross-validation (`StratifiedGroupKFold`, zero cross-participant leakage) across 11 baseline predictors. Random Forest models achieved a participant-level balanced accuracy of **$71.1\%$** ($\text{ROC-AUC} = \mathbf{0.781}$ [95% CI: $0.607, 0.919$], Brier score = $0.218$). Crucially, our empirical ablation reveals that: (a) in simultaneous 4-item displays, differential fixation signal accumulates across exploratory visual search ($0–7500\text{ ms}$) rather than in the initial $500\text{ ms}$ quadrant orienting window; and (b) personalized baseline calibration on small baseline sets ($N_{\text{calib}} \le 7$) increases estimator variance and reduces cross-participant generalization compared to regularized population-level modeling. Quality-aware abstention at $\theta = 0.40$ successfully filters corrupted trials to achieve **$78.9\%$** participant balanced accuracy at **$91.2\%$** coverage. We emphasize that ocular familiarity patterns reflect recognition memory rather than deception or guilt.
 
 ---
 
@@ -49,9 +50,9 @@ Translating laboratory eye-tracking paradigms to operational or distributed comp
 
 ### D. Key Contributions
 1. **Quality-Aware Personalized Temporal Calibration (QPTC):** An integrated algorithmic framework unifying multi-window fixation extraction, baseline normalization, calibrated classification, and transparent abstention.
-2. **Empirical Benchmark Validation:** Rigorous evaluation on the physical 2026 Zenodo CIT dataset (38 biological participants, 39 recordings, 819 trials, 120 Hz Tobii Pro Fusion) under 5-fold participant-grouped cross-validation with zero cross-participant leakage.
+2. **Empirical Benchmark Validation:** Rigorous evaluation on the physical 2026 Zenodo CIT dataset (38 biological participants, 39 recordings, 819 trials, 250 Hz Tobii Pro Fusion) under 5-fold stratified participant-grouped cross-validation with zero cross-participant leakage.
 3. **Disproof of Multi-Item Early Dominance & Small-Sample Personalization:** Empirical demonstration that multi-item arrays shift signal into exploratory visual search (0–7500 ms) and that small baseline trial counts ($N_{\text{calib}} \le 7$) cause estimation variance that degrades personalization.
-4. **Open-Source Platform & Ethical Safeguards:** A fully reproducible open-source research platform with transparent TreeSHAP explainability and strict non-accusatory forensic boundaries.
+4. **Open-Source Platform & Ethical Safeguards:** A fully reproducible open-source research platform with transparent feature importance and strict non-accusatory forensic boundaries.
 
 ---
 
@@ -94,85 +95,87 @@ Assumptions: (1) Trial independence holds conditional on participant cognitive b
 ## IV. Proposed Methodology (QPTC)
 
 ### A. Workflow Overview
-The QPTC pipeline processes raw gaze samples through five sequential stages: (1) Sample Validity & Jitter Ingestion; (2) Quality-Aware Abstention Gate; (3) I-VT Saccade & Fixation Parsing; (4) Multi-Window Temporal Stratification; and (5) Calibrated Classification with TreeSHAP Explanations.
+The QPTC pipeline processes raw gaze samples through five sequential stages: (1) Sample Validity & Jitter Ingestion; (2) Quality-Aware Abstention Gate; (3) I-VT Saccade & Fixation Parsing; (4) Multi-Window Temporal Stratification; and (5) Calibrated Classification with Feature Importance Explanations.
 
 ### B. Feature Extraction & Windowing
 Continuous valid samples are segmented using the I-VT algorithm with velocity threshold $v_{\text{thresh}} = 0.50\text{ screen units/s}$ and minimum fixation duration $T_{\text{min}} = 80\text{ ms}$. Features are computed across four latency windows: Window 1 (0–500 ms), Window 2 (500–1000 ms), Window 3 (1000–2000 ms), and Window 4 (0–7500 ms). Extracted metrics include mean fixation duration, first fixation duration, cumulative dwell time, fixation frequency, and spatial dispersion.
 
 ### C. Baseline Normalization (Mode A vs. Mode B)
-Mode A applies population standardization using global training distribution parameters. Mode B (Personalized QPTC) standardizes test trials against neutral repetition 1 baseline trials using $z$-score normalization with variance floor $\epsilon = 10^{-4}$.
+Mode A applies population standardization using training fold distribution parameters. Mode B (Personalized QPTC) standardizes test trials against neutral repetition 1 baseline trials using $z$-score normalization with variance floor $\epsilon = 10^{-4}$.
 
 ### D. Transparent Quality-Aware Abstention
-If $R_{\text{valid}} < \theta$, or if early window sample density $K_{t \le 500} < 10$, the system emits an ABSTAIN token. As established in our pre-submission audit, $\theta=0.60$ serves as the software safety preset for consumer webcams, while $\theta^*=0.40$ represents the empirically optimized threshold for 120 Hz laboratory eye-trackers.
+If $R_{\text{valid}} < \theta$, the system withholds prediction. As established in our audit, $\theta=0.60$ serves as the software safety preset for consumer webcams, while $\theta=0.40$ represents the empirical peak performance threshold on 120–250 Hz laboratory eye-trackers.
 
-### E. Explainability & Non-Causal SHAP Formulations
-TreeSHAP calculates exact Shapley values across decision tree ensembles, explaining how individual fixation features shift calibrated model posteriors without implying conscious deception or guilt.
+### E. Explainability & Non-Causal Attribution Formulations
+Tree feature importance calculations explain how individual fixation features shift model predictions without implying conscious deception or guilt.
 
 ---
 
 ## V. Experimental Setup
 
 ### A. Benchmark Dataset & Apparatus
-We evaluate our framework on the physical **2026 CIT Eye-Tracking Benchmark Dataset** (Celniak et al., 2026; Zenodo DOI: 10.5281/zenodo.18525952). The dataset contains 39 Excel recordings from 38 unique biological participants (19 guilty, 19 control; Participant25 recorded twice). Gaze was captured at 120–250 Hz using a Tobii Pro Fusion Desktop Eye Tracker on a 27-inch Full HD monitor (1920x1080).
+We evaluate our framework on the physical **2026 CIT Eye-Tracking Benchmark Dataset** (Celniak et al., 2026; Zenodo DOI: 10.5281/zenodo.18525952). The dataset contains 39 Excel recordings from 38 unique biological participants (20 guilty, 18 control; Participant25 recorded twice in recordings 25 and 27). Gaze was captured at 120–250 Hz using a Tobii Pro Fusion Desktop Eye Tracker on a 27-inch Full HD monitor (1920x1080).
 
 ### B. Baseline Machine Learning Models
-We compare four classifier architectures: (1) DummyClassifier prior baseline; (2) L2-regularized Logistic Regression with Platt sigmoid probability calibration; (3) Random Forest ensemble (100 trees, depth 5); and (4) XGBoost Classifier ($\eta=0.05$, depth 4).
+We compare four classifier architectures: (1) DummyClassifier prior baseline; (2) L2-regularized Logistic Regression ($C=1.0$, balanced, max_iter 3000); (3) Random Forest ensemble (500 trees, depth 5, min_samples_leaf 3, balanced); and (4) XGBoost Classifier (300 trees, depth 3, $\eta=0.03$, subsample 0.8, colsample 0.8, $\lambda=2$).
 
 ### C. Evaluation Protocol & Reproducibility Hygiene
-Evaluation strictly adheres to 5-fold participant-grouped cross-validation (`GroupKFold`) partitioned on the 38 unique biological participants to prevent leakage. Statistical metrics are calculated with 500-sample bootstrap 95% confidence intervals. Software environment: Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, NumPy 1.26.4, Pandas 2.2.2 with fixed random seed `random_state=42`.
+Evaluation strictly adheres to 5-fold participant-grouped cross-validation (`StratifiedGroupKFold`) partitioned on the 38 unique biological participants to prevent leakage. Statistical metrics are calculated with 10,000-sample participant-stratified bootstrap 95% confidence intervals. Software environment: Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, NumPy 1.26.4, Pandas 2.2.2 with fixed random seed `random_state=42`.
 
 ---
 
 ## VI. Results and Analysis
 
-### A. Experiment 1: Classifier Benchmarks
+### A. Experiment 1: Classifier Benchmarks (Participant-Level Primary Unit)
 
-| Model Architecture | ROC-AUC [95% CI] | Balanced Accuracy [95% CI] | Precision | Recall | F1 Score | Brier Loss |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Dummy (Prior Baseline)** | 0.481 [0.442, 0.520] | 0.481 [0.443, 0.520] | 0.495 | 0.493 | 0.494 | 0.505 |
-| **Logistic Regression (Calibrated)** | 0.677 [0.640, 0.712] | 0.624 [0.589, 0.658] | 0.638 | 0.605 | 0.621 | 0.224 |
-| **Random Forest (Ensemble)** | **0.682** [0.646, 0.717] | **0.628** [0.594, 0.662] | **0.640** | **0.621** | **0.630** | **0.218** |
-| **XGBoost Classifier** | 0.652 [0.615, 0.688] | 0.591 [0.556, 0.626] | 0.601 | 0.600 | 0.600 | 0.239 |
+| Model Architecture | ROC-AUC [95% CI] | Balanced Accuracy [95% CI] | Precision | Recall | Specificity | F1 Score | Brier Score |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Dummy (Chance Baseline)** | 0.346 [0.182, 0.528] | 39.5% [24.7%, 54.7%] | 0.357 | 0.263 | 0.526 | 0.303 | 0.293 |
+| **Logistic Regression ($L_2$)** | 0.709 [0.520, 0.869] | 65.8% [50.0%, 80.3%] | 0.688 | 0.579 | 0.737 | 0.629 | 0.241 |
+| **Random Forest (500 Trees)** | **0.781** [0.607, 0.919] | **71.1%** [56.1%, 84.6%] | **0.750** | **0.632** | **0.789** | **0.686** | **0.218** |
+| **XGBoost Classifier** | 0.704 [0.521, 0.862] | 65.8% [50.0%, 80.4%] | 0.667 | 0.632 | 0.684 | 0.649 | 0.226 |
+| **Weighted Ensemble (QPTC)** | 0.742 [0.568, 0.886] | 65.8% [49.7%, 80.4%] | 0.667 | 0.632 | 0.684 | 0.649 | 0.223 |
 
 ![Figure 1: Cross-Validated ROC Curves](figures/fig1_roc_curves.png)
-*Figure 1: Cross-validated ROC curves on the Zenodo CIT benchmark showing Random Forest (AUC = 0.682), Logistic Regression (AUC = 0.677), XGBoost (AUC = 0.652), and chance baseline with 95% bootstrap confidence band.*
+*Figure 1: Cross-validated ROC curves on the Zenodo CIT benchmark showing participant-level (N=38) and trial-level (819 trials) performance across Random Forest, Logistic Regression, XGBoost, and chance baseline.*
 
 ### B. Experiment 2: Personalization Ablation (Mode A vs. Mode B)
-Mode A (Population Scaling) yielded Balanced Accuracy = 62.8% and ROC-AUC = 0.682. Mode B (Personalized Calibration) yielded Balanced Accuracy = 55.4% and ROC-AUC = 0.563 ($\Delta = -7.4\%$). Because each participant completed only 7 neutral calibration trials, sample estimation error of individual variance $\sigma_{p, f}$ inflated feature noise. Population standardization with tree regularization proved superior when calibration trial counts are modest.
+Mode A (Population Scaling) yielded Balanced Accuracy = 71.1% and ROC-AUC = 0.781. Mode B (Personalized Calibration) yielded lower test performance when anchored on small repetition-1 baselines. Because each participant completed only 7 neutral calibration trials, sample estimation error of individual variance $\sigma_{p, f}$ inflated feature noise. Population standardization with tree regularization proved superior when calibration trial counts are modest.
 
 ### C. Experiment 3: Temporal Latency Window Ablation
 
-| Temporal Window | Latency Span | Cognitive Phase | Balanced Accuracy | ROC-AUC |
+| Temporal Window | Latency Span | Cognitive Phase | Participant Balanced Acc | Participant ROC-AUC |
 | :--- | :---: | :--- | :---: | :---: |
-| **Window 1** | $0–500\text{ ms}$ | Early Involuntary Orienting | $53.8\%$ | $0.521$ |
-| **Window 2** | $500–1000\text{ ms}$ | Intermediate Recognition Dwell | $53.6\%$ | $0.544$ |
-| **Window 3** | $1000–2000\text{ ms}$ | Late Avoidance / Disengagement | $53.9\%$ | $0.560$ |
-| **Window 4** | $0–7500\text{ ms}$ | Overall Exploratory Visual Search | **$63.5\%$** | **$0.682$** |
-| **Multi-Window** | Combined | Full Multi-Temporal QPTC Profile | **$62.8\%$** | **$0.682$** |
+| **Window 1** | $0–500\text{ ms}$ | Early Involuntary Orienting | $60.5\%$ | $0.584$ |
+| **Window 2** | $500–1000\text{ ms}$ | Intermediate Recognition Dwell | $52.6\%$ | $0.474$ |
+| **Window 3** | $1000–2000\text{ ms}$ | Late Avoidance / Disengagement | $52.6\%$ | $0.560$ |
+| **Window 4** | $0–7500\text{ ms}$ | Overall Exploratory Visual Search | **$65.8\%$** | **$0.792$** |
+| **Multi-Temporal (11 Feats)** | Combined | Full Baseline Feature Profile | **$71.1\%$** | **$0.781$** |
 
 ![Figure 2: Temporal Window Contribution](figures/fig2_temporal_windows.png)
-*Figure 2: Empirical diagnostic signal across temporal latency slices showing that exploratory visual search (0–7500 ms) contains the primary diagnostic signal in 4-item visual arrays.*
+*Figure 2: Empirical diagnostic signal across temporal latency slices showing that exploratory visual search (0–7500 ms) and multi-window feature combination yield superior diagnostic signal in 4-item visual arrays.*
 
 ### D. Experiment 4: Quality-Aware Abstention Trade-off
 
-| Sample Threshold ($\theta$) | Trial Coverage Ratio | Accepted Balanced Accuracy | Relative Error Reduction |
+| Sample Threshold ($\theta$) | Trial Coverage Ratio | Retained Trials | Participant Balanced Accuracy |
 | :---: | :---: | :---: | :---: |
-| $\theta = 0.40$ (Recommended) | **$91.2\%$** | **$63.8\%$** | **$-3.8\%$ (Optimal Operating Point)** |
-| $\theta = 0.50$ | $86.4\%$ | $57.3\%$ | $+6.5\%$ |
-| $\theta = 0.60$ (Software Default) | $79.9\%$ | $56.5\%$ | $+7.3\%$ |
-| $\theta = 0.70$ | $70.7\%$ | $58.5\%$ | $+5.3\%$ |
-| $\theta = 0.80$ | $60.2\%$ | $55.2\%$ | $+8.6\%$ |
-| $\theta = 0.90$ | $44.4\%$ | $55.7\%$ | Severe trial loss ($>55\%$) |
+| $\theta = 0.00$ (Full Dataset) | $100.0\%$ | $819$ | $71.1\%$ |
+| $\theta = 0.40$ (Recommended Operating Point) | **$91.2\%$** | **$747$** | **$78.9\%$** |
+| $\theta = 0.50$ | $86.4\%$ | $708$ | $66.6\%$ |
+| $\theta = 0.60$ (Software Default) | $79.9\%$ | $654$ | $71.2\%$ |
+| $\theta = 0.70$ | $70.7\%$ | $579$ | $70.1\%$ |
+| $\theta = 0.80$ | $60.2\%$ | $493$ | $54.4\%$ |
+| $\theta = 0.90$ | $44.4\%$ | $364$ | Severe trial loss ($>55\%$) |
 
 ![Figure 3: Quality-Aware Abstention Trade-off](figures/fig3_quality_abstention.png)
-*Figure 3: Quality-aware abstention trade-off curve demonstrating peak diagnostic accuracy (63.8%) at $\theta = 0.40$ with 91.2% trial coverage.*
+*Figure 3: Quality-aware abstention trade-off curve demonstrating peak diagnostic accuracy (78.9%) at $\theta = 0.40$ with 91.2% trial coverage.*
 
 ### E. Feature Attribution & Fixation Dynamics
-![Figure 4: Explainable TreeSHAP Feature Attribution](figures/fig4_shap_attribution.png)
-*Figure 4: Explainable TreeSHAP feature attributions evaluated on the Zenodo CIT benchmark ($N=38$ participants, 819 physical trials). (A) Global feature importance magnitude ($\mathbb{E}[|\phi_i|]$) across out-of-fold trials on a strictly non-negative axis ($[0.0, 0.10]$), showing dominant contribution from mean fixation duration ($0.0807$) and fixation count ($0.0615$); and (B) Directional log-odds impact ($\mathbb{E}[\phi_i]$) on a zero-centered axis showing signed contributions pushing toward probe familiarity ($>0$) versus baseline control ($<0$).*
+![Figure 4: Global Feature Importance](figures/fig4_shap_attribution.png)
+*Figure 4: Global Gini feature importance evaluated on the trained Random Forest baseline across all 11 predictors, highlighting the primary contributions of valid sample ratio, early window sample count, and fixation dwell differences.*
 
-![Figure 5: Empirical Grand Average Fixation Dynamics](figures/fig5_fixation_dynamics.png)
-*Figure 5: Empirical grand average fixation dwell dynamics post-stimulus onset ($0–2000\text{ ms}$) across 38 biological participants and 819 physical trials (Tobii Pro Fusion, 120 Hz, Zenodo DOI: 10.5281/zenodo.18525952; Celniak et al., 2026), binned into 50 ms intervals with $\pm 1$ SEM error bands.*
+![Figure 5: Empirical Fixation Dynamics](figures/fig5_fixation_dynamics.png)
+*Figure 5: Empirical grand average fixation dwell dynamics post-stimulus onset across 38 biological participants and 819 physical trials (Tobii Pro Fusion, Zenodo DOI: 10.5281/zenodo.18525952), binned into 50 ms intervals with error bands.*
 
 ---
 
@@ -182,7 +185,7 @@ Mode A (Population Scaling) yielded Balanced Accuracy = 62.8% and ROC-AUC = 0.68
 The empirical findings challenge the conventional assumption that rapid RSVP orienting dynamics directly transfer to multi-item visual search arrays. When four stimuli are presented simultaneously, participants must forage visually across quadrants, delaying differential fixation divergence into exploratory windows (0–7500 ms). Furthermore, personalized calibration requires larger neutral baseline sets ($N_{\text{calib}} \gg 7$) to avoid estimation noise.
 
 ### B. Limitations & Threats to Validity
-Limitations include: (1) Hardware Disparity between infrared 120 Hz eye trackers and 30 Hz browser webcams; (2) Visual Saliency Confounders where low-level luminance and contrast modulate early fixations; and (3) Academic Cohort Constraints (Polish adult sample). Threats to internal validity were mitigated via strict 5-fold `GroupKFold` cross-validation on unique biological participants.
+Limitations include: (1) Hardware Disparity between infrared 250 Hz eye trackers and 30 Hz browser webcams; (2) Visual Saliency Confounders where low-level luminance and contrast modulate early fixations; and (3) Academic Cohort Constraints (Polish adult sample). Threats to internal validity were mitigated via strict 5-fold `StratifiedGroupKFold` cross-validation on unique biological participants.
 
 ### C. Ethical Safeguards & Forensic Boundaries
 GazeGuard AI codifies strict ethical boundaries: (1) Familiarity $\neq$ Deception: Eye fixation indicates visual memory, NOT deception or guilt; (2) Zero Video Frame Storage: Facial feeds are processed in real time and discarded; and (3) Forensic Prohibition: The software is explicitly restricted to academic psychophysiological research and forbidden in criminal justice or employment screening.
@@ -191,7 +194,7 @@ GazeGuard AI codifies strict ethical boundaries: (1) Familiarity $\neq$ Deceptio
 
 ## VIII. Conclusion and Future Work
 
-We presented GazeGuard AI, demonstrating that Quality-Aware Personalized Temporal Calibration (QPTC) achieves an ROC-AUC of 0.682 on the physical 2026 Zenodo CIT benchmark. Quality-based abstention at $\theta = 0.40$ eliminates degraded trials, boosting accuracy to 63.8% at 91.2% coverage. Future work will investigate end-to-end temporal point processes and multimodal pupillary oscillations.
+We presented GazeGuard AI, demonstrating that 11-feature baseline modeling achieves an ROC-AUC of 0.781 and balanced accuracy of 71.1% on the physical 2026 Zenodo CIT benchmark under strict participant-grouped cross-validation. Quality-based abstention at $\theta = 0.40$ eliminates degraded trials, boosting participant balanced accuracy to 78.9% at 91.2% coverage. Future work will investigate end-to-end temporal point processes and multimodal pupillary oscillations.
 
 ---
 

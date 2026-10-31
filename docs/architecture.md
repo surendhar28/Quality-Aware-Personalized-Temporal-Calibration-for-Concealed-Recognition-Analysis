@@ -1,79 +1,83 @@
-# GazeGuard AI — System Architecture Specification
+# GazeGuard AI — System Architecture Specification (Revision 12)
 
-## 1. Architectural Overview
+## 1. Architectural Overview & Research Taxonomy
 
-GazeGuard AI is designed as a modular, decoupled research platform investigating **Quality-Aware Personalized Temporal Calibration (QPTC)** for Concealed Recognition Analysis.
+GazeGuard AI contains both **experimentally evaluated baseline modules** (validated on the physical Zenodo CIT eye-tracking benchmark) and **proposed QPTC research modules** under active investigation.
 
 ```mermaid
 graph TD
-    subgraph Browser Client [Frontend: React + TypeScript + Vite]
-        UI[9-Page Scientific Dashboard]
-        Tracker[WebGazer / Tracker Interface]
-        State[Local Session State]
+    subgraph Evaluated [Experimentally Evaluated Baseline Engine]
+        DataIn[Canonical 819-Row Derived Feature Table]
+        Splitter[StratifiedGroupKFold Participant Splitter k=5]
+        Preproc[Outer-Fold Preprocessing: Imputation & Scaling]
+        Classifiers[Baseline Classifiers: LogReg, RF 500, XGBoost 300]
+        Aggregator[Participant-Level Held-Out Mean Aggregator]
+        Bootstrap[10,000 Participant-Stratified Bootstrap Engine]
     end
 
-    subgraph FastAPIService [Backend API: Python 3.11 + FastAPI]
-        API[REST Endpoints /api/*]
-        Quality[Quality Assessment & Abstention Engine]
-        FeatureEng[Multi-Window Temporal Feature Extractor]
-        Calib[Personalized QPTC Calibration Engine]
-        ML[ML Pipeline: LogReg, RF, XGBoost, SHAP]
-        Eval[GroupKFold Evaluator & Ablations]
-        Repo[Database Repository Layer]
+    subgraph Proposed [Proposed QPTC Research Modules - Pending Validation]
+        NormEngine[Participant-Specific Calibration Normalizer Mode B]
+        AbstainGate[Validation-Selected Quality Abstention Gate]
+        WindowWeighter[Dynamic Multi-Window Temporal Weighting]
+        FoldSHAP[Fold-Specific SHAP Explainability Engine]
+        WebcamAdapt[Domain-Adapted Webcam Gaze Estimation]
     end
 
-    subgraph Storage [Persistent Storage]
-        DB[(SQLite / SQLAlchemy)]
-        RawData[data/raw: Zenodo 18525952 CIT Recordings]
-        SynthData[data/synthetic: Benchmark Fixtures]
+    subgraph AppPlatform [Interactive Research Platform & Dashboard]
+        API[FastAPI Backend /api/*]
+        DB[(SQLite Persistent Storage)]
+        UI[React + Vite Frontend Dashboard]
     end
 
-    UI -->|Gaze Coordinates & Events| API
-    Tracker -->|Sample Stream| UI
-    API --> Quality
-    API --> FeatureEng
-    FeatureEng --> Calib
-    Calib --> ML
-    ML --> Repo
-    Quality -->|Abstention Filter| ML
-    Eval --> ML
-    Repo --> DB
-    RawData --> API
-    SynthData --> API
+    DataIn --> Splitter
+    Splitter --> Preproc
+    Preproc --> Classifiers
+    Classifiers --> Aggregator
+    Aggregator --> Bootstrap
+
+    Classifiers -.-> NormEngine
+    Preproc -.-> AbstainGate
+    Classifiers -.-> WindowWeighter
+    Classifiers -.-> FoldSHAP
+
+    Aggregator --> API
+    API --> DB
+    API --> UI
 ```
 
-## 2. Component Design
+---
 
-### 2.1 Quality-Aware Abstention Engine (`backend/app/quality/quality_checker.py`)
-- Analyzes raw sample streams before feature extraction or inference.
-- Evaluates:
-  - Valid sample ratio $R_{\text{valid}} = \frac{N_{\text{valid}}}{N_{\text{total}}}$.
-  - Early-window sample density $N_{t \le 500\text{ms}}$.
-  - Timestamp jitter $\sigma_{\Delta t}$.
-  - Hardware tracker confidence (when provided).
-- Triggers abstention (`status = "insufficient_evidence"`) when $R_{\text{valid}} < \theta_{\text{quality}}$ (default $\theta = 0.60$).
+## 2. Experimentally Evaluated Baseline Modules
 
-### 2.2 Temporal Feature Extractor (`backend/app/features/extractor.py`)
-- Implements I-VT (Velocity-Threshold Identification) fixation classification.
-- Slices continuous trajectories into standardized temporal intervals:
-  - $W_1 = [0, 500\text{ ms}]$: Primary visual orienting hypothesis window.
-  - $W_2 = [500, 1000\text{ ms}]$: Intermediate appraisal window.
-  - $W_3 = [1000, 2000\text{ ms}]$: Late exploratory window.
-  - $W_{\text{overall}} = [0, T\text{ ms}]$: Total trial viewing duration.
+These components are fully implemented, audited, and verified via `scripts/run_fresh_grouped_experiment.py` and `scripts/verify_experiment.py`:
 
-### 2.3 Personalized Calibration Engine (`backend/app/calibration/calibrator.py`)
-- Implements Mode A (Population Grand Mean) and Mode B (Personalized QPTC):
-  $$z_{i, f} = \frac{x_{i, f} - \mu_{p, f}}{\sigma_{p, f} + \epsilon}$$
-- **Strict Leakage Prevention**: Calibration baseline $(\mu_p, \sigma_p)$ is computed exclusively on neutral calibration or irrelevant stimuli, raising a runtime `ValueError` if probe/crime stimuli are detected.
-- Safeguards for near-zero calibration variance ($\sigma < 10^{-3}$) and fallback to population parameters.
+| Module | Implementation | Validation Method |
+| :--- | :--- | :--- |
+| **Dataset Ingestion** | Ingests 819 rows across 38 participants from `data/processed/zenodo_features.csv`. | SHA-256 hash verified against `data/manifests/dataset_manifest.json`. |
+| **Stratified Participant Split** | `StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42)` grouping on `participant_id`. | Zero training/test participant overlap verified across all folds. |
+| **Outer-Fold Preprocessing** | SimpleImputer(median) and StandardScaler fit strictly on training folds. | Prevents data leakage between folds. |
+| **Baseline Classifiers** | Logistic Regression ($L_2$, balanced), Random Forest (500 trees, depth 5), XGBoost (300 trees, depth 3). | Standardized Scikit-learn pipelines with fixed random seeds. |
+| **Participant Aggregation** | Mean held-out row probability per participant: $\bar{p}_i = \frac{1}{M_i} \sum \hat{p}_{ij}$. | Evaluated at primary decision threshold $\bar{p} \ge 0.50$. |
+| **Bootstrap Engine** | 10,000 participant-stratified resamples for 95% Confidence Intervals. | Independent sampling within control and guilty participant pools. |
 
-### 2.4 Machine Learning & Explainability Pipeline (`backend/app/models/ml_pipeline.py`)
-- Implements standard, leak-free scikit-learn pipelines with median imputation and RobustScaler.
-- Supported estimators: DummyClassifier, LogisticRegression (L2), RandomForestClassifier, XGBoost.
-- Probability calibration: Sigmoid (Platt Scaling) and Isotonic regression fitted strictly on internal CV folds.
-- Feature attribution: TreeSHAP and LinearSHAP for per-stimulus feature explanations.
+---
 
-### 2.5 Storage Layer (`backend/app/database/repositories.py`)
-- Implements Repository Pattern isolating database operations.
-- SQLite backend storing pseudonymous session IDs, derived feature summaries, calibration baselines, and experiment logs.
-- **Privacy Enforcement**: Raw webcam video is never stored.
+## 3. Proposed QPTC Research Modules (Pending Empirical Validation)
+
+These components represent the theoretical and algorithmic contributions of the proposed Quality-Aware Personalized Temporal Calibration (QPTC) framework, scheduled for formal validation in subsequent research phases:
+
+| Module | Theoretical Function | Current Empirical Status |
+| :--- | :--- | :--- |
+| **Personalized Calibration (`Mode B`)** | Normalizes fixation features against individual neutral exposure baselines: $z = (x - \mu_{\text{calib}}) / (\sigma_{\text{calib}} + \epsilon)$. | **Proposed / Pending Validation.** In multi-item arrays with limited calibration trials ($N \le 7$), individual variance inflates test estimation error compared to regularized population baselines. Requires sufficiently powered neutral exposure datasets. |
+| **Quality Abstention Gate** | Evaluates valid sample ratio ($R_{\text{valid}}$), jitter, and density; abstains when gaze tracking is degraded. | **Evaluated as an ablation curve.** Evaluated across fixed thresholds $\theta \in [0.40, 0.90]$. Dynamic validation-tuned threshold selection remains in development. |
+| **Multi-Window Temporal Weighting** | Blends early visual orienting ($0–500\text{ ms}$), intermediate appraisal, and late exploration windows. | **Ablation Completed.** Evaluated via `scripts/run_temporal_ablation.py`. |
+| **Fold-Specific SHAP Engine** | Computes TreeSHAP explanations per cross-validation fold without test data leakage. | **Proposed.** Synthetic prototypes exist in application; fold-specific real-data SHAP is scheduled for Phase 4. |
+| **Webcam Estimation Adapter** | Translates browser WebGazer / MediaPipe RGB gaze coordinates to canonical CIT schema. | **Interactive Demonstration Only.** Not claimed to achieve laboratory eye-tracker accuracy. |
+
+---
+
+## 4. Software Architecture (Interactive Application)
+
+- **Backend API (`backend/`):** Python 3.11 with FastAPI, providing RESTful endpoints (`/api/experiments/*`, `/api/trials`, `/api/sessions`, `/api/reports`).
+- **Storage Layer:** SQLite via SQLAlchemy models (`backend/app/database/`), recording session metadata, gaze sample streams, and trial summaries.
+- **Frontend Dashboard (`frontend/`):** React 18, TypeScript, Tailwind CSS, Lucide icons, and Recharts, providing an interactive research workstation for conducting live trials, visualizing scanpaths, and inspecting experiment results.

@@ -1,0 +1,5 @@
+model,unit,balanced_accuracy,balanced_acc_ci_95,roc_auc,roc_auc_ci_95,brier_score,precision,recall_sensitivity,specificity,f1_score,true_negatives,false_positives,false_negatives,true_positives,sample_count
+dummy,participant,0.3947,"[0.2368, 0.5526]",0.3463,"[0.1856, 0.5235]",0.2925,0.3571,0.2632,0.5263,0.303,10,9,14,5,38
+logistic_regression,participant,0.6579,"[0.5, 0.7895]",0.7091,"[0.5291, 0.8753]",0.2414,0.6875,0.5789,0.7368,0.6286,14,5,8,11,38
+random_forest,participant,0.7105,"[0.5526, 0.8421]",0.7812,"[0.615, 0.9197]",0.2183,0.75,0.6316,0.7895,0.6857,15,4,7,12,38
+xgboost,participant,0.6579,"[0.5, 0.8158]",0.7036,"[0.5263, 0.8615]",0.2265,0.6667,0.6316,0.6842,0.6486,13,6,7,12,38

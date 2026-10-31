@@ -1,0 +1,43 @@
+{
+  "dataset_name": "Zenodo Physical Eye-Tracking CIT Benchmark",
+  "zenodo_record": "18525952",
+  "zenodo_doi": "10.5281/zenodo.18525952",
+  "license": "Creative Commons Attribution 4.0 International",
+  "hardware": "Tobii Pro Fusion (250 Hz)",
+  "file_path": "data/processed/zenodo_features.csv",
+  "sha256_hash": "7a7275b274f84ce9ce5558ca1f737eb702c08e6c7bf5a08bc60aaa020bc2eb59",
+  "file_size_bytes": 130945,
+  "total_rows": 819,
+  "total_columns": 23,
+  "columns": [
+    "participant_id",
+    "filename",
+    "group",
+    "gender",
+    "calibration_accuracy_deg",
+    "trial_id",
+    "stimulus_name",
+    "category",
+    "repetition",
+    "total_samples",
+    "valid_sample_ratio",
+    "missing_sample_ratio",
+    "early_window_sample_count",
+    "early_probe_fix_dur",
+    "early_irrel_fix_dur",
+    "early_probe_diff",
+    "mid_probe_diff",
+    "late_probe_diff",
+    "total_probe_diff",
+    "mean_fix_duration",
+    "median_fix_duration",
+    "fixation_count",
+    "familiarity_label"
+  ],
+  "unique_participants": 38,
+  "unique_recordings": 39,
+  "class_distribution": {
+    "1": 420,
+    "0": 399
+  }
+}

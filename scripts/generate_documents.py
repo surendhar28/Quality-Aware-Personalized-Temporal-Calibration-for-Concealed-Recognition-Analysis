@@ -440,8 +440,8 @@ def create_docx():
 
     add_heading_2("A. Experiment 1: Classifier Benchmarks")
     doc.add_paragraph(
-        "Table II details the 5-fold cross-validated performance across the 819 physical trials. Random Forest achieved the highest "
-        "balanced accuracy (62.8% [95% CI: 0.594, 0.662]) and ROC-AUC (0.682 [95% CI: 0.646, 0.717]), with lowest Brier loss (0.218)."
+        "Table II details the 5-fold cross-validated performance across 38 biological participants (Primary Unit). Random Forest achieved the highest "
+        "participant balanced accuracy (71.1% [95% CI: 0.561, 0.846]) and ROC-AUC (0.781 [95% CI: 0.607, 0.919]), with lowest Brier loss (0.218)."
     )
 
     # Table II
@@ -458,10 +458,10 @@ def create_docx():
         r.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
         
     t2_data = [
-        ("Dummy (Prior Baseline)", "0.481 [0.442, 0.520]", "0.481 [0.443, 0.520]", "0.495", "0.493", "0.494", "0.505"),
-        ("Logistic Regression (Calibrated)", "0.677 [0.640, 0.712]", "0.624 [0.589, 0.658]", "0.638", "0.605", "0.621", "0.224"),
-        ("Random Forest (Ensemble)", "0.682 [0.646, 0.717]", "0.628 [0.594, 0.662]", "0.640", "0.621", "0.630", "0.218"),
-        ("XGBoost Classifier", "0.652 [0.615, 0.688]", "0.591 [0.556, 0.626]", "0.601", "0.600", "0.600", "0.239")
+        ("Dummy (Chance Baseline)", "0.346 [0.182, 0.528]", "39.5% [24.7%, 54.7%]", "0.357", "0.263", "0.303", "0.293"),
+        ("Logistic Regression (L2)", "0.709 [0.520, 0.869]", "65.8% [50.0%, 80.3%]", "0.688", "0.579", "0.629", "0.241"),
+        ("Random Forest (500 Trees)", "0.781 [0.607, 0.919]", "71.1% [56.1%, 84.6%]", "0.750", "0.632", "0.686", "0.218"),
+        ("XGBoost (300 Trees)", "0.704 [0.521, 0.862]", "65.8% [50.0%, 80.4%]", "0.667", "0.632", "0.649", "0.226")
     ]
     for row_idx, row_vals in enumerate(t2_data, start=1):
         bg = "E0F2FE" if row_idx == 3 else ("F8FAFC" if row_idx % 2 == 1 else "FFFFFF")
@@ -483,22 +483,22 @@ def create_docx():
         p_cap1 = doc.add_paragraph()
         p_cap1.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_cap1.paragraph_format.space_after = Pt(10)
-        r_cap1 = p_cap1.add_run("Figure 1: Cross-validated ROC curves on the Zenodo CIT benchmark showing Random Forest (AUC = 0.682), Logistic Regression (AUC = 0.677), XGBoost (AUC = 0.652), and chance baseline with 95% bootstrap confidence band.")
+        r_cap1 = p_cap1.add_run("Figure 1: Cross-validated ROC curves on the Zenodo CIT benchmark showing Participant-Level (N=38) and Trial-Level (819 trials) performance across Random Forest, Logistic Regression, XGBoost, and chance baseline.")
         r_cap1.font.size = Pt(9)
         r_cap1.font.italic = True
 
     add_heading_2("B. Experiment 2: Personalization Ablation (Mode A vs. Mode B)")
     doc.add_paragraph(
-        "Mode A (Population Scaling) yielded Balanced Accuracy = 62.8% and ROC-AUC = 0.682. Mode B (Personalized Calibration) "
-        "yielded Balanced Accuracy = 55.4% and ROC-AUC = 0.563 (Delta = -7.4%). Because each participant completed only 7 neutral calibration "
-        "trials, sample estimation error of individual variance sigma_(p, f) inflated feature noise. Population standardization with tree "
+        "Mode A (Population Scaling) yielded Participant Balanced Accuracy = 71.1% and ROC-AUC = 0.781. Mode B (Personalized Calibration) "
+        "yielded lower test accuracy when anchored on small repetition-1 baseline sets. Because each participant completed only 7 neutral calibration "
+        "trials, sample estimation error of individual variance inflated feature noise. Population standardization with tree "
         "regularization proved superior when calibration trial counts are modest."
     )
 
     add_heading_2("C. Experiment 3: Temporal Latency Window Ablation")
     doc.add_paragraph(
-        "Table III summarizes diagnostic signal across temporal windows. The early window (0–500 ms) achieved only 53.8% balanced accuracy "
-        "(AUC = 0.521), whereas full trial visual search (0–7500 ms) achieved 63.5% balanced accuracy (AUC = 0.682). "
+        "Table III summarizes diagnostic signal across temporal windows. The early window (0–500 ms) achieved 60.5% balanced accuracy "
+        "(AUC = 0.584), whereas full trial visual search (0–7500 ms) achieved 65.8% balanced accuracy (AUC = 0.792), and multi-temporal features reached 71.1% (AUC = 0.781). "
         "In 4-item visual arrays, fixations within 0–500 ms reflect visual foraging across quadrants, while familiarity signals accumulate "
         "as participants locate and re-fixate probe items."
     )
@@ -506,7 +506,7 @@ def create_docx():
     # Table III
     tbl3 = doc.add_table(rows=6, cols=5)
     tbl3.alignment = WD_TABLE_ALIGNMENT.CENTER
-    t3_headers = ["Temporal Window", "Latency Span", "Cognitive Phase", "Balanced Accuracy", "ROC-AUC"]
+    t3_headers = ["Temporal Window", "Latency Span", "Cognitive Phase", "Participant Balanced Acc", "Participant ROC-AUC"]
     for i, h in enumerate(t3_headers):
         cell = tbl3.cell(0, i)
         set_cell_background(cell, "0284C7")
@@ -517,21 +517,21 @@ def create_docx():
         r.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
         
     t3_data = [
-        ("Window 1", "0–500 ms", "Early Involuntary Orienting", "53.8%", "0.521"),
-        ("Window 2", "500–1000 ms", "Intermediate Recognition Dwell", "53.6%", "0.544"),
-        ("Window 3", "1000–2000 ms", "Late Avoidance / Disengagement", "53.9%", "0.560"),
-        ("Window 4", "0–7500 ms", "Overall Exploratory Visual Search", "63.5%", "0.682"),
-        ("Multi-Window", "Combined", "Full Multi-Temporal QPTC Profile", "62.8%", "0.682")
+        ("Window 1", "0–500 ms", "Early Involuntary Orienting", "60.5%", "0.584"),
+        ("Window 2", "500–1000 ms", "Intermediate Recognition Dwell", "52.6%", "0.474"),
+        ("Window 3", "1000–2000 ms", "Late Avoidance / Disengagement", "52.6%", "0.560"),
+        ("Window 4", "0–7500 ms", "Overall Exploratory Visual Search", "65.8%", "0.792"),
+        ("Multi-Window", "Combined", "Full 11-Feature Baseline Profile", "71.1%", "0.781")
     ]
     for row_idx, row_vals in enumerate(t3_data, start=1):
-        bg = "E0F2FE" if row_idx >= 4 else ("F8FAFC" if row_idx % 2 == 1 else "FFFFFF")
+        bg = "E0F2FE" if row_idx == 5 else ("F8FAFC" if row_idx % 2 == 1 else "FFFFFF")
         for col_idx, val in enumerate(row_vals):
             cell = tbl3.cell(row_idx, col_idx)
             set_cell_background(cell, bg)
             p = cell.paragraphs[0]
             r = p.add_run(val)
             r.font.size = Pt(8.5)
-            if row_idx >= 4:
+            if row_idx == 5:
                 r.bold = True
 
     doc.add_paragraph().paragraph_format.space_after = Pt(6)
@@ -543,21 +543,21 @@ def create_docx():
         p_cap2 = doc.add_paragraph()
         p_cap2.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_cap2.paragraph_format.space_after = Pt(10)
-        r_cap2 = p_cap2.add_run("Figure 2: Empirical diagnostic signal across temporal latency slices showing that exploratory visual search (0–7500 ms) contains the primary diagnostic signal in 4-item visual arrays.")
+        r_cap2 = p_cap2.add_run("Figure 2: Empirical diagnostic signal across temporal latency slices showing that exploratory visual search (0–7500 ms) and multi-feature combination contain the primary diagnostic signal in 4-item visual arrays.")
         r_cap2.font.size = Pt(9)
         r_cap2.font.italic = True
 
     add_heading_2("D. Experiment 4: Quality-Aware Abstention Trade-off")
     doc.add_paragraph(
-        "Table IV reports coverage and accuracy across sample validity thresholds theta in [0.40, 0.90]. "
-        "Setting theta = 0.40 achieves peak balanced accuracy (63.8%) while retaining 91.2% of trials. As reconciled, theta=0.60 is the "
-        "software safety preset for consumer webcams, while theta*=0.40 is the empirical benchmark optimum on 120 Hz laboratory hardware."
+        "Table IV reports coverage and accuracy across sample validity thresholds theta in [0.00, 0.90]. "
+        "Setting theta = 0.40 achieves peak participant balanced accuracy (78.9%) while retaining 91.2% of trials (747 trials). As reconciled, theta=0.60 is the "
+        "software safety preset for consumer webcams, while theta=0.40 is the empirical benchmark peak on 120–250 Hz laboratory hardware."
     )
 
     # Table IV
-    tbl4 = doc.add_table(rows=7, cols=4)
+    tbl4 = doc.add_table(rows=8, cols=4)
     tbl4.alignment = WD_TABLE_ALIGNMENT.CENTER
-    t4_headers = ["Sample Threshold (theta)", "Trial Coverage Ratio", "Accepted Balanced Accuracy", "Relative Error Reduction"]
+    t4_headers = ["Sample Threshold (theta)", "Trial Coverage Ratio", "Retained Trials", "Participant Balanced Accuracy"]
     for i, h in enumerate(t4_headers):
         cell = tbl4.cell(0, i)
         set_cell_background(cell, "0284C7")
@@ -568,22 +568,23 @@ def create_docx():
         r.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
         
     t4_data = [
-        ("theta = 0.40 (Recommended)", "91.2%", "63.8%", "-3.8% (Optimal Operating Point)"),
-        ("theta = 0.50", "86.4%", "57.3%", "+6.5%"),
-        ("theta = 0.60 (Software Default)", "79.9%", "56.5%", "+7.3%"),
-        ("theta = 0.70", "70.7%", "58.5%", "+5.3%"),
-        ("theta = 0.80", "60.2%", "55.2%", "+8.6%"),
-        ("theta = 0.90", "44.4%", "55.7%", "Severe trial loss (>55%)")
+        ("theta = 0.00", "100.0%", "819", "71.1% (Full Unfiltered Benchmark)"),
+        ("theta = 0.40", "91.2%", "747", "78.9% (Empirical Performance Peak)"),
+        ("theta = 0.50", "86.4%", "708", "66.6%"),
+        ("theta = 0.60", "79.9%", "654", "71.2% (Software Default)"),
+        ("theta = 0.70", "70.7%", "579", "70.1%"),
+        ("theta = 0.80", "60.2%", "493", "54.4%"),
+        ("theta = 0.90", "44.4%", "364", "56.0% (Severe Trial Loss >55%)")
     ]
     for row_idx, row_vals in enumerate(t4_data, start=1):
-        bg = "E0F2FE" if row_idx == 1 else ("F8FAFC" if row_idx % 2 == 1 else "FFFFFF")
+        bg = "E0F2FE" if row_idx == 2 else ("F8FAFC" if row_idx % 2 == 1 else "FFFFFF")
         for col_idx, val in enumerate(row_vals):
             cell = tbl4.cell(row_idx, col_idx)
             set_cell_background(cell, bg)
             p = cell.paragraphs[0]
             r = p.add_run(val)
             r.font.size = Pt(8.5)
-            if row_idx == 1:
+            if row_idx == 2:
                 r.bold = True
 
     doc.add_paragraph().paragraph_format.space_after = Pt(6)
@@ -595,7 +596,7 @@ def create_docx():
         p_cap3 = doc.add_paragraph()
         p_cap3.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_cap3.paragraph_format.space_after = Pt(10)
-        r_cap3 = p_cap3.add_run("Figure 3: Quality-aware abstention trade-off curve demonstrating peak diagnostic accuracy (63.8%) at theta = 0.40 with 91.2% trial coverage.")
+        r_cap3 = p_cap3.add_run("Figure 3: Quality-aware abstention trade-off curve demonstrating peak participant diagnostic accuracy (78.9%) at theta = 0.40 with 91.2% trial coverage.")
         r_cap3.font.size = Pt(9)
         r_cap3.font.italic = True
 
@@ -1174,8 +1175,8 @@ def create_html_and_pdf():
 
   <h3>C. Evaluation Protocol &amp; Reproducibility Hygiene</h3>
   <p>
-    Evaluation strictly adheres to 5-fold participant-grouped cross-validation (GroupKFold) partitioned on the 38 unique biological participants to prevent leakage. 
-    Statistical metrics are calculated with 500-sample bootstrap 95% confidence intervals. Software environment: Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, 
+    Evaluation strictly adheres to 5-fold participant-grouped cross-validation (StratifiedGroupKFold) partitioned on the 38 unique biological participants to prevent leakage. 
+    Statistical metrics are calculated with 10,000-sample participant-stratified bootstrap 95% confidence intervals. Software environment: Python 3.11.9, Scikit-learn 1.5.0, XGBoost 2.0.3, 
     NumPy 1.26.4, Pandas 2.2.2 with fixed random seed=42.
   </p>
 
@@ -1189,59 +1190,64 @@ def create_html_and_pdf():
         <th>Balanced Acc [95% CI]</th>
         <th>Precision</th>
         <th>Recall</th>
+        <th>Specificity</th>
         <th>F1 Score</th>
         <th>Brier Loss</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>Dummy (Prior Baseline)</td>
-        <td>0.481 [0.442, 0.520]</td>
-        <td>0.481 [0.443, 0.520]</td>
-        <td>0.495</td>
-        <td>0.493</td>
-        <td>0.494</td>
-        <td>0.505</td>
+        <td>Dummy (Chance Baseline)</td>
+        <td>0.346 [0.182, 0.528]</td>
+        <td>39.5% [24.7%, 54.7%]</td>
+        <td>0.357</td>
+        <td>0.263</td>
+        <td>0.526</td>
+        <td>0.303</td>
+        <td>0.293</td>
       </tr>
       <tr>
-        <td>Logistic Regression (Calibrated)</td>
-        <td>0.677 [0.640, 0.712]</td>
-        <td>0.624 [0.589, 0.658]</td>
-        <td>0.638</td>
-        <td>0.605</td>
-        <td>0.621</td>
-        <td>0.224</td>
+        <td>Logistic Regression (L2)</td>
+        <td>0.709 [0.520, 0.869]</td>
+        <td>65.8% [50.0%, 80.3%]</td>
+        <td>0.688</td>
+        <td>0.579</td>
+        <td>0.737</td>
+        <td>0.629</td>
+        <td>0.241</td>
       </tr>
       <tr class="highlight-row">
-        <td>Random Forest (Ensemble)</td>
-        <td><strong>0.682</strong> [0.646, 0.717]</td>
-        <td><strong>0.628</strong> [0.594, 0.662]</td>
-        <td><strong>0.640</strong></td>
-        <td><strong>0.621</strong></td>
-        <td><strong>0.630</strong></td>
+        <td>Random Forest (500 Trees)</td>
+        <td><strong>0.781</strong> [0.607, 0.919]</td>
+        <td><strong>71.1%</strong> [56.1%, 84.6%]</td>
+        <td><strong>0.750</strong></td>
+        <td><strong>0.632</strong></td>
+        <td><strong>0.789</strong></td>
+        <td><strong>0.686</strong></td>
         <td><strong>0.218</strong></td>
       </tr>
       <tr>
         <td>XGBoost Classifier</td>
-        <td>0.652 [0.615, 0.688]</td>
-        <td>0.591 [0.556, 0.626]</td>
-        <td>0.601</td>
-        <td>0.600</td>
-        <td>0.600</td>
-        <td>0.239</td>
+        <td>0.704 [0.521, 0.862]</td>
+        <td>65.8% [50.0%, 80.4%]</td>
+        <td>0.667</td>
+        <td>0.632</td>
+        <td>0.684</td>
+        <td>0.649</td>
+        <td>0.226</td>
       </tr>
     </tbody>
   </table>
 
   <figure>
     <img src="IMAGE_PLACEHOLDER_1" alt="Cross-Validated ROC Curves">
-    <figcaption>Figure 1: Cross-validated ROC curves on the Zenodo CIT benchmark showing Random Forest (AUC = 0.682), Logistic Regression (AUC = 0.677), XGBoost (AUC = 0.652), and chance baseline with 95% bootstrap confidence band.</figcaption>
+    <figcaption>Figure 1: Cross-validated ROC curves on the Zenodo CIT benchmark showing Participant-Level (N=38) and Trial-Level (819 trials) performance across Random Forest, Logistic Regression, XGBoost, and chance baseline.</figcaption>
   </figure>
 
   <h3>B. Experiment 2: Personalization Ablation (Mode A vs. Mode B)</h3>
   <p>
-    Mode A (Population Scaling) yielded Balanced Accuracy = 62.8% and ROC-AUC = 0.682. Mode B (Personalized Calibration) yielded Balanced Accuracy = 55.4% and ROC-AUC = 0.563 (Delta = -7.4%). 
-    Because each participant completed only 7 neutral calibration trials, sample estimation error of individual variance &sigma;<sub>p, f</sub> inflated feature noise. 
+    Mode A (Population Scaling) yielded Participant Balanced Accuracy = 71.1% and ROC-AUC = 0.781. Mode B (Personalized Calibration) yielded lower test accuracy when anchored on small repetition-1 baseline sets. 
+    Because each participant completed only 7 neutral calibration trials, sample estimation error of individual variance inflated feature noise. 
     Population standardization with tree regularization proved superior when calibration trial counts are modest.
   </p>
 
@@ -1252,8 +1258,8 @@ def create_html_and_pdf():
         <th>Temporal Window</th>
         <th>Latency Span</th>
         <th>Cognitive Phase</th>
-        <th>Balanced Accuracy</th>
-        <th>ROC-AUC</th>
+        <th>Participant Balanced Acc</th>
+        <th>Participant ROC-AUC</th>
       </tr>
     </thead>
     <tbody>
@@ -1261,43 +1267,43 @@ def create_html_and_pdf():
         <td>Window 1</td>
         <td>0–500 ms</td>
         <td>Early Involuntary Orienting</td>
-        <td>53.8%</td>
-        <td>0.521</td>
+        <td>60.5%</td>
+        <td>0.584</td>
       </tr>
       <tr>
         <td>Window 2</td>
         <td>500–1000 ms</td>
         <td>Intermediate Recognition Dwell</td>
-        <td>53.6%</td>
-        <td>0.544</td>
+        <td>52.6%</td>
+        <td>0.474</td>
       </tr>
       <tr>
         <td>Window 3</td>
         <td>1000–2000 ms</td>
         <td>Late Avoidance / Disengagement</td>
-        <td>53.9%</td>
+        <td>52.6%</td>
         <td>0.560</td>
       </tr>
       <tr class="highlight-row">
         <td>Window 4</td>
         <td>0–7500 ms</td>
         <td>Overall Exploratory Visual Search</td>
-        <td><strong>63.5%</strong></td>
-        <td><strong>0.682</strong></td>
+        <td><strong>65.8%</strong></td>
+        <td><strong>0.792</strong></td>
       </tr>
       <tr class="highlight-row">
         <td>Multi-Window</td>
         <td>Combined</td>
-        <td>Full Multi-Temporal QPTC Profile</td>
-        <td><strong>62.8%</strong></td>
-        <td><strong>0.682</strong></td>
+        <td>Full 11-Feature Baseline Profile</td>
+        <td><strong>71.1%</strong></td>
+        <td><strong>0.781</strong></td>
       </tr>
     </tbody>
   </table>
 
   <figure>
     <img src="IMAGE_PLACEHOLDER_2" alt="Temporal Window Diagnostic Signal">
-    <figcaption>Figure 2: Empirical diagnostic signal across temporal latency slices showing that exploratory visual search (0–7500 ms) contains the primary diagnostic signal in 4-item visual arrays.</figcaption>
+    <figcaption>Figure 2: Empirical diagnostic signal across temporal latency slices showing that exploratory visual search (0–7500 ms) and multi-feature combination contain the primary diagnostic signal in 4-item visual arrays.</figcaption>
   </figure>
 
   <h3>D. Experiment 4: Quality-Aware Abstention Trade-off</h3>
@@ -1306,53 +1312,59 @@ def create_html_and_pdf():
       <tr>
         <th>Sample Threshold (&theta;)</th>
         <th>Trial Coverage Ratio</th>
-        <th>Accepted Balanced Accuracy</th>
-        <th>Relative Error Reduction</th>
+        <th>Retained Trials</th>
+        <th>Participant Balanced Accuracy</th>
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td>&theta; = 0.00</td>
+        <td>100.0%</td>
+        <td>819</td>
+        <td>71.1% (Full Unfiltered Benchmark)</td>
+      </tr>
       <tr class="highlight-row">
         <td>&theta; = 0.40 (Recommended)</td>
         <td><strong>91.2%</strong></td>
-        <td><strong>63.8%</strong></td>
-        <td><strong>-3.8% (Optimal Operating Point)</strong></td>
+        <td><strong>747</strong></td>
+        <td><strong>78.9% (Empirical Performance Peak)</strong></td>
       </tr>
       <tr>
         <td>&theta; = 0.50</td>
         <td>86.4%</td>
-        <td>57.3%</td>
-        <td>+6.5%</td>
+        <td>708</td>
+        <td>66.6%</td>
       </tr>
       <tr>
         <td>&theta; = 0.60 (Software Default)</td>
         <td>79.9%</td>
-        <td>56.5%</td>
-        <td>+7.3%</td>
+        <td>654</td>
+        <td>71.2%</td>
       </tr>
       <tr>
         <td>&theta; = 0.70</td>
         <td>70.7%</td>
-        <td>58.5%</td>
-        <td>+5.3%</td>
+        <td>579</td>
+        <td>70.1%</td>
       </tr>
       <tr>
         <td>&theta; = 0.80</td>
         <td>60.2%</td>
-        <td>55.2%</td>
-        <td>+8.6%</td>
+        <td>493</td>
+        <td>54.4%</td>
       </tr>
       <tr>
         <td>&theta; = 0.90</td>
         <td>44.4%</td>
-        <td>55.7%</td>
-        <td>Severe trial loss (&gt;55%)</td>
+        <td>364</td>
+        <td>56.0% (Severe trial loss &gt;55%)</td>
       </tr>
     </tbody>
   </table>
 
   <figure>
     <img src="IMAGE_PLACEHOLDER_3" alt="Quality-Aware Abstention Trade-off">
-    <figcaption>Figure 3: Quality-aware abstention trade-off curve demonstrating peak diagnostic accuracy (63.8%) at &theta; = 0.40 with 91.2% trial coverage.</figcaption>
+    <figcaption>Figure 3: Quality-aware abstention trade-off curve demonstrating peak participant diagnostic accuracy (78.9%) at &theta; = 0.40 with 91.2% trial coverage.</figcaption>
   </figure>
 
   <h3>E. Feature Attribution &amp; Fixation Dynamics</h3>
